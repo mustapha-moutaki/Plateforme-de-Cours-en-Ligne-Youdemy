@@ -13,8 +13,6 @@ use PDO;
             $this->pdo = $pdo;
         }
 
-       
-
         public function countTeachers() {
             return $this->countTeacher('users');
         }

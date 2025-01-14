@@ -10,7 +10,6 @@ abstract class User {
     protected $email;
     protected $password;
     protected $role;
-
     protected $bio;
     protected $status;
 
@@ -89,6 +88,7 @@ abstract class User {
         }
     }
 
+    
 
     // public function login($email, $password): bool {
     //     $query = "SELECT * FROM " . $this->table . " WHERE email = :email LIMIT 1";

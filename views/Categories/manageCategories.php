@@ -1,12 +1,11 @@
 <?php
-require_once '../../vendor/autoload.php';  // Autoload necessary classes
+require_once '../../vendor/autoload.php';
 use Config\Database;  
 use Models\Category; 
 
 $pdo = Database::makeConnection();  
 
 try {
-    // Create an instance of Category model
     $CategoryModel = new Category($pdo);
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();

@@ -50,5 +50,6 @@ class Admin extends User {
         $stmt = $this->pdo->query("SELECT author_id, name FROM authors");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
 }
 ?>
