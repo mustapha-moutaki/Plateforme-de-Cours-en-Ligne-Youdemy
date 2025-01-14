@@ -40,7 +40,7 @@
     <!-- End Navbar -->
     <div class="container my-5">
     <h2 class="mb-4">Manage Courses</h2>
-    <button class="btn btn-primary mb-4">Add Course</button>
+    <a href="addCourse.php"><button class="btn btn-primary mb-4">Add Course</button></a>
     <!-- Courses Table -->
     <table class="table table-bordered table-hover">
       <thead class="table-dark">
