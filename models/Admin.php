@@ -4,7 +4,6 @@ namespace Models;
 use PDO;
 
 class Admin extends User {
-    // Constructor to initialize PDO connection (inherited from User)
     public function __construct($db) {
         parent::__construct($db);
     }
