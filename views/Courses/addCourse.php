@@ -258,5 +258,6 @@ if (isset($_POST['add_course'])) {
             contentInputDiv.innerHTML = '';
         });
     </script>
+    
 </body>
 </html>
