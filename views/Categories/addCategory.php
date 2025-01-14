@@ -1,4 +1,28 @@
+<?php
+require_once '../../vendor/autoload.php';
+use Config\Database;
+use Models\Category;  
 
+
+$pdo = new Database();
+$categoryModel = new Category($pdo);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
+    $categoryName = htmlspecialchars(trim($_POST['category']));
+
+    if (!empty($categoryName)) {
+
+        $categoryModel->createCategory($categoryName);
+
+        header('Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/Categories/manageCategories.php');
+        exit();
+    } else {
+        echo "category name cannot be empty!";
+    }
+
+}
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -28,13 +52,13 @@
       </div>
 
       <!-- Category Addition Form -->
-      <form action="add_category.php" method="POST">
+      <form action="addCategory.php" method="POST">
         <div class="mb-3">
-          <input type="text" class="form-control" id="categoryName" name="categoryName" required placeholder="Enter category name" autocomplete="off">
+          <input type="text" class="form-control" id="categoryName" name="category" required placeholder="Enter category name" autocomplete="off">
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" class="btn btn-info w-100">Add Category</button>
+        <button type="submit" class="btn btn-info w-100" name="add_category">Add Category</button>
       </form>
     </div>
   </div>

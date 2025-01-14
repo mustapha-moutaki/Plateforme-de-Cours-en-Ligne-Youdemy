@@ -1,3 +1,64 @@
+<?php
+require_once '../../vendor/autoload.php';
+use Config\Database;
+use Models\Admin;
+use Models\Category;
+use Models\Tag;
+use Models\Course;
+
+$pdo = Database::makeConnection();
+
+$categoryModel = new Category($pdo);
+$categories = $categoryModel->getAllCategories();
+
+$tagModel = new Tag($pdo);
+$tags = $tagModel->getAllTags();
+
+if (isset($_POST['add_course'])) {
+    // Get form values
+    $title = $_POST['title'];
+    $content = $_POST['content']; // This will be the TinyMCE content
+    $meta_description = $_POST['meta_description'];
+    $category_id = $_POST['category'];
+    $tags = $_POST['tags'] ?? [];
+    $content_type = $_POST['content_type']; // Type of content (video/document)
+
+    // Initialize course model and create course
+    $courseModel = new Course($pdo);
+    
+    try {
+        $pdo->beginTransaction();
+
+        // Determine content based on type (video or document)
+        $content_data = '';
+        if ($content_type === 'video') {
+            $content_data = $_POST['video_url']; // Get video URL if content type is video
+        } elseif ($content_type === 'document') {
+            // Store document file path or name here if you save it
+            $content_data = $_FILES['document_file']['name'] ?? ''; // Handle file upload separately
+        }
+
+        // Insert course data into database
+        $course_id = $courseModel->addCourse($title, $content, $meta_description, $category_id, $content_type, $content_data);
+
+        // Add tags (if any) associated with the course
+        if (!empty($tags)) {
+            foreach ($tags as $tag_id) {
+                $courseModel->addCourseTag($course_id, $tag_id);
+            }
+        }
+
+        $pdo->commit();
+        header("Location: http://localhost/devblog_dashboard/admin/index.php");
+        exit;
+
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        echo "Error: " . $e->getMessage();
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,23 +114,23 @@
                         <div class="card-body p-4">
                             <h1 class="card-title text-center mb-4">Create New Course</h1>
                             
-                            <form id="courseForm">
+                            <form id="courseForm" method="POST" enctype="multipart/form-data">
                                 <!-- Title -->
                                 <div class="mb-3">
                                     <label for="title" class="form-label fw-semibold">Course Title</label>
-                                    <input type="text" class="form-control" id="title" required placeholder="Enter course title">
+                                    <input type="text" class="form-control" id="title" required placeholder="Enter course title" name="title">
                                 </div>
 
                                 <!-- Description -->
                                 <div class="mb-3">
                                     <label for="description" class="form-label fw-semibold">Course Description</label>
-                                    <textarea class="form-control" id="description" required></textarea>
+                                    <textarea class="form-control" id="description" name ="meta_description" required></textarea>
                                 </div>
 
                                 <!-- Content Type -->
                                 <div class="mb-3">
                                     <label for="contentType" class="form-label fw-semibold">Content Type</label>
-                                    <select class="form-select" id="contentType" required>
+                                    <select class="form-select" id="contentType" name="content_type" required>
                                         <option value="">Select content type</option>
                                         <option value="video">Video</option>
                                         <option value="document">Document</option>
@@ -82,64 +143,29 @@
                                 <!-- Category -->
                                 <div class="mb-3">
                                     <label for="category" class="form-label fw-semibold">Category</label>
-                                    <select class="form-select" id="category" required>
-                                        <option value="">Select category</option>
-                                        <option value="web-development">Web Development</option>
-                                        <option value="data-science">Data Science</option>
-                                        <option value="mobile-dev">Mobile Development</option>
-                                        <option value="ui-ux">UI/UX Design</option>
-                                        <option value="cloud">Cloud Computing</option>
+                                    <select class="form-select" id="category" name="category" required>
+                                    <?php foreach ($categories as $category) : ?>
+                                     <option value="<?= htmlspecialchars($category['id']) ?>"><?= htmlspecialchars($category['name']) ?></option>
+                                     <?php endforeach; ?>
                                     </select>
                                 </div>
 
                                 <!-- Tags -->
+                                 
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold">Tags</label>
-                                    <div class="row g-3">
-                                        <div class="col-md-4">
+                                    <div class="d-flex flex-wrap gap-3">
+                                        <?php foreach ($tags as $tag): ?>
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="tags" value="html" id="htmlCheck">
-                                                <label class="form-check-label" for="htmlCheck">HTML</label>
+                                                <input class="form-check-input" type="checkbox" name="tags[]" value="<?= htmlspecialchars($tag['id']) ?>" id="tag<?= $tag['id'] ?>">
+                                                <label class="form-check-label" for="tag<?= $tag['id'] ?>"><?= $tag['name'] ?></label>
                                             </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="tags" value="css" id="cssCheck">
-                                                <label class="form-check-label" for="cssCheck">CSS</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="tags" value="javascript" id="jsCheck">
-                                                <label class="form-check-label" for="jsCheck">JavaScript</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="tags" value="python" id="pythonCheck">
-                                                <label class="form-check-label" for="pythonCheck">Python</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="tags" value="react" id="reactCheck">
-                                                <label class="form-check-label" for="reactCheck">React</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="tags" value="node" id="nodeCheck">
-                                                <label class="form-check-label" for="nodeCheck">Node.js</label>
-                                            </div>
-                                        </div>
+                                        <?php endforeach; ?>
                                     </div>
                                 </div>
 
                                 <!-- Submit Button -->
-                                <button type="submit" class="btn btn-primary w-100">
-
-                                    Publish Course
-                                </button>
+                                <button type="submit" class="btn btn-primary w-100" name="add_course">Publish Course</button>
                             </form>
                         </div>
                     </div>
@@ -205,8 +231,8 @@
         });
 
         // Handle form submission
-        document.getElementById('courseForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        document.getElementById('courseForm').addEventListener('submit', function() {
+            // e.preventDefault();
             
             // Gather selected tags
             const selectedTags = Array.from(document.querySelectorAll('input[name="tags"]:checked'))

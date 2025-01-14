@@ -24,6 +24,7 @@ abstract class Model {
         $stmt->execute([...array_values($data), $idValue]);
         return $stmt->rowCount();
     }
+    
 
 
 

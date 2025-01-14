@@ -81,7 +81,7 @@ if (isset($_GET['delete_id'])) {
                     <td class="text-center"><?= $tag['id'] ?></td>
                     <td><?= $tag['name'] ?></td>
                     <td class="text-center">
-                      <button class="btn btn-sm btn-warning me-2"> <a href="update_tag.php?update_tag=<?= $tag['id']; ?>">Edit</a></button>
+                      <button class="btn btn-sm btn-warning me-2"> <a href="editTag.php?update_tag=<?= $tag['id']; ?>">Edit</a></button>
                       <button class="btn btn-sm btn-danger"><a href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/Tags/manageTags.php?delete_id=<?php echo $tag['id']; ?>" onclick="return confirm('Are you sure you want to delete this tag?')">Delete</a></button>
                     </td>
                   </tr>

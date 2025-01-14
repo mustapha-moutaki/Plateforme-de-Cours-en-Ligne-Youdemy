@@ -1,3 +1,34 @@
+<?php
+require_once '../../vendor/autoload.php';  // Autoload necessary classes
+use Config\Database;  // Use the correct namespace for Database
+use Models\Category;  // Import the Category model
+
+// Get the connection instance
+$pdo = Database::makeConnection();  // Ensure the connection is successful
+
+try {
+    // Create an instance of Category model
+    $CategoryModel = new Category($pdo);
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+
+// Fetch all categories
+$getAllCategories = $CategoryModel->getAllCategories();
+
+// If there's a delete request, process it
+if (isset($_GET['delete_id'])) {
+    $deleteId = $_GET['delete_id'];
+    if ($CategoryModel->deleteCategory($deleteId)) {
+        header('Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/categories/manageCategories.php');
+        exit();
+    } else {
+        echo "Failed to delete the Tag.";
+    }
+}
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -42,24 +73,18 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <!-- Example row -->
+           
+                <?php  foreach ($getAllCategories as $category):?>
                   <tr>
-                    <td class="text-center">1</td>
-                    <td>Web Development</td>
+                    <td class="text-center"><?= $category['id'] ?></td>
+                    <td><?= $category['name'] ?></td>
                     <td class="text-center">
-                      <button class="btn btn-sm btn-warning me-2">Edit</button>
-                      <button class="btn btn-sm btn-danger">Delete</button>
+                      <button class="btn btn-sm btn-warning me-2"><a href="editCategory.php?update_category=<?= $category['id']; ?>">Edit</a></button>
+                      <button class="btn btn-sm btn-danger"><a href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/categories/manageCategories.php?delete_id=<?php echo $category['id']; ?>" onclick="return confirm('Are you sure you want to delete this category?')">Delete</a></button>
                     </td>
                   </tr>
-                  <tr>
-                    <td class="text-center">2</td>
-                    <td>Marketing</td>
-                    <td class="text-center">
-                      <button class="btn btn-sm btn-warning me-2">Edit</button>
-                      <button class="btn btn-sm btn-danger">Delete</button>
-                    </td>
-                  </tr>
-                  <!-- More rows can go here -->
+                 
+                  <?php endforeach; ?>
                 </tbody>
               </table>
             </div>

@@ -5,6 +5,9 @@ use Models\Model;
 use PDO;
     class Tag extends Model {
         protected $table = 'tags';
+        public function __construct($pdo) {
+            $this->pdo = $pdo;
+        }
         
 
         public function createTag($name) {
@@ -18,6 +21,7 @@ use PDO;
         public function updateTag($id, $name) {
             return $this->update($this->table, ['name' => $name], 'id', $id);
         }
+
     
         public function deleteTag($id) {
             return $this->delete($this->table, 'id', $id);
