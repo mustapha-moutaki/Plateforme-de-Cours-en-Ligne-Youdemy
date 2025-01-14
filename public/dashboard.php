@@ -91,6 +91,7 @@ include_once './components/sidebar.php';
                 </div>
               </div>
             </div>
+            
             <hr class="horizontal my-0 bg-primary">
             <div class="card-footer p-3">
              
