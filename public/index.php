@@ -1,4 +1,37 @@
 <?php
+require_once '../vendor/autoload.php';
+
+use Config\Database;
+use Models\Tag;
+use Models\Category;
+use Models\Course;
+use Models\Teacher;
+$pdo = new database();
+$conn = $pdo ->makeconnection();
+
+$categoryModel = new Category($pdo);
+$tagModel = new Tag($pdo);
+// $userModel = new user($pdo);
+$courseModel = new Course($pdo);
+$teacherModel = new Teacher($pdo);
+
+
+// Get the counts of categories and tags
+$categoryCount = $categoryModel->countCategories();   
+$tagCount = $tagModel->countTags();  
+$teacherCount = $teacherModel->countTeachers();  
+$courseCount = $courseModel->countCourses();
+
+try {
+    $CategoryModel = new Category($pdo);
+    $tagModel = new Tag($pdo);
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+
+// Fetch all categories
+$getAllCategories = $CategoryModel->getAllCategories();
+$getAllTags = $tagModel->getAllTags();
 ?>
 
 <!DOCTYPE html>
@@ -12,6 +45,7 @@
     <script src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/heroicons.min.js"></script>
 </head>
 <body class="font-roboto bg-gray-50">
+
 
     <!-- Header Section -->
     <header class="bg-indigo-800 text-white p-6 flex justify-between items-center shadow-md">
@@ -43,20 +77,20 @@
                 <div>
                     <label for="categoryFilter" class="text-lg text-gray-700">Category:</label>
                     <select id="categoryFilter" class="bg-gray-100 p-2 rounded-lg shadow-sm">
+                    <?php  foreach ($getAllCategories as $category):?>
                         <option value="">All</option>
-                        <option value="web">Web Development</option>
-                        <option value="python">Python Programming</option>
-                        <option value="data">Data Science</option>
+                        <option value=""><?php echo $category['name'] ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
                 <div>
                     <label for="tagFilter" class="text-lg text-gray-700">Tags:</label>
                     <select id="tagFilter" class="bg-gray-100 p-2 rounded-lg shadow-sm">
+                    <?php  foreach ($getAllTags as $tag):?>
                         <option value="">All</option>
-                        <option value="frontend">Frontend</option>
-                        <option value="backend">Backend</option>
-                        <option value="machine-learning">Machine Learning</option>
+                        <option value="frontend"><?php echo $tag['name'] ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
             </div>
