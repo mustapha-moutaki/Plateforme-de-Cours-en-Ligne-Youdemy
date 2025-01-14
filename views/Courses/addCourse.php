@@ -16,6 +16,7 @@ $tags = $tagModel->getAllTags();
 
 if (isset($_POST['add_course'])) {
     // Get form values
+    echo"------------------------------------------------added-------------------------added";
     $title = $_POST['title'];
     $content = $_POST['content']; // This will be the TinyMCE content
     $meta_description = $_POST['meta_description'];
@@ -34,12 +35,24 @@ if (isset($_POST['add_course'])) {
         if ($content_type === 'video') {
             $content_data = $_POST['video_url']; // Get video URL if content type is video
         } elseif ($content_type === 'document') {
-            // Store document file path or name here if you save it
-            $content_data = $_FILES['document_file']['name'] ?? ''; // Handle file upload separately
+            // Handle document upload
+            if (isset($_FILES['document_file']) && $_FILES['document_file']['error'] === UPLOAD_ERR_OK) {
+                $fileTmpPath = $_FILES['document_file']['tmp_name'];
+                $fileName = $_FILES['document_file']['name'];
+                $fileDestPath = '../../uploads/' . $fileName;
+
+                if (move_uploaded_file($fileTmpPath, $fileDestPath)) {
+                    $content_data = $fileName; // Store document filename
+                } else {
+                    throw new Exception("Failed to upload document.");
+                }
+            } else {
+                throw new Exception("No document uploaded or error occurred.");
+            }
         }
 
         // Insert course data into database
-        $course_id = $courseModel->addCourse($title, $content, $meta_description, $category_id, $content_type, $content_data);
+        $course_id = $courseModel->addCourse($title, $content, $meta_description, $category_id, $content_data);
 
         // Add tags (if any) associated with the course
         if (!empty($tags)) {
@@ -114,6 +127,7 @@ if (isset($_POST['add_course'])) {
                         <div class="card-body p-4">
                             <h1 class="card-title text-center mb-4">Create New Course</h1>
                             
+
                             <form id="courseForm" method="POST" enctype="multipart/form-data">
                                 <!-- Title -->
                                 <div class="mb-3">
@@ -124,21 +138,29 @@ if (isset($_POST['add_course'])) {
                                 <!-- Description -->
                                 <div class="mb-3">
                                     <label for="description" class="form-label fw-semibold">Course Description</label>
-                                    <textarea class="form-control" id="description" name ="meta_description" required></textarea>
+                                    <textarea class="form-control" id="description" name="content" required></textarea>
                                 </div>
 
-                                <!-- Content Type -->
+                                <!-- Meta Description -->
                                 <div class="mb-3">
-                                    <label for="contentType" class="form-label fw-semibold">Content Type</label>
-                                    <select class="form-select" id="contentType" name="content_type" required>
-                                        <option value="">Select content type</option>
-                                        <option value="video">Video</option>
-                                        <option value="document">Document</option>
-                                    </select>
+                                    <label for="meta_description" class="form-label fw-semibold">Meta Description</label>
+                                    <textarea class="form-control" id="meta_description" name="meta_description" required></textarea>
                                 </div>
 
-                                <!-- Dynamic Content Input (Video/Document) -->
-                                <div id="contentInput" class="mb-3 d-none"></div>
+                                <!-- Media URL or Document File -->
+                                <div class="mb-3">
+                                    <select name="content_type" id="">
+                                        <option value="" name="video">video</option>
+                                        <option value="" name="document">document</option>
+                                    </select>
+
+                                    <label for="mediaInput" class="form-label fw-semibold">Course Content (Video URL or Document File)</label>
+                                    <input type="url" class="form-control" id="mediaUrl" placeholder="Enter video URL (YouTube, Vimeo, etc.)" name="video_url">
+                                    <input type="file" class="form-control mt-3" id="mediaFile" name="document_file" accept=".pdf,.doc,.docx">
+                                </div>
+
+                                <div class="mb-3">
+ 
 
                                 <!-- Category -->
                                 <div class="mb-3">
@@ -151,7 +173,6 @@ if (isset($_POST['add_course'])) {
                                 </div>
 
                                 <!-- Tags -->
-                                 
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold">Tags</label>
                                     <div class="d-flex flex-wrap gap-3">
@@ -178,86 +199,14 @@ if (isset($_POST['add_course'])) {
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        // Initialize TinyMCE
+
+    <!-- Initialize TinyMCE -->
+    <!-- <script>
         tinymce.init({
             selector: '#description',
-            height: 300,
-            menubar: false,
-            plugins: [
-                'advlist', 'autolink', 'lists', 'link', 'charmap', 'preview',
-                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                'insertdatetime', 'table', 'code', 'help', 'wordcount'
-            ],
-            toolbar: 'undo redo | blocks | ' +
-                'bold italic | alignleft aligncenter ' +
-                'alignright alignjustify | bullist numlist outdent indent | ' +
-                'removeformat | help',
-            content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 16px; }'
+            plugins: 'lists link image media',
+            toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright | outdent indent | link image media'
         });
-
-        // Handle content type change
-        const contentTypeSelect = document.getElementById('contentType');
-        const contentInputDiv = document.getElementById('contentInput');
-
-        contentTypeSelect.addEventListener('change', function() {
-            const selectedType = this.value;
-            if (!selectedType) {
-                contentInputDiv.classList.add('d-none');
-                contentInputDiv.innerHTML = '';
-                return;
-            }
-
-            contentInputDiv.classList.remove('d-none');
-            
-            if (selectedType === 'video') {
-                contentInputDiv.innerHTML = `
-                    <div>
-                        <label for="videoUrl" class="form-label">Video URL</label>
-                        <input type="url" class="form-control" id="videoUrl" required
-                            placeholder="Enter video URL (YouTube, Vimeo, etc.)">
-                    </div>
-                `;
-            } else if (selectedType === 'document') {
-                contentInputDiv.innerHTML = `
-                    <div>
-                        <label for="documentFile" class="form-label">Upload Document</label>
-                        <input type="file" class="form-control" id="documentFile" required 
-                            accept=".pdf,.doc,.docx">
-                    </div>
-                `;
-            }
-        });
-
-        // Handle form submission
-        document.getElementById('courseForm').addEventListener('submit', function() {
-            // e.preventDefault();
-            
-            // Gather selected tags
-            const selectedTags = Array.from(document.querySelectorAll('input[name="tags"]:checked'))
-                .map(checkbox => checkbox.value);
-
-            // Create course object
-            const courseData = {
-                title: document.getElementById('title').value,
-                description: tinymce.get('description').getContent(),
-                contentType: document.getElementById('contentType').value,
-                category: document.getElementById('category').value,
-                tags: selectedTags,
-                content: contentTypeSelect.value === 'video' 
-                    ? document.getElementById('videoUrl')?.value 
-                    : document.getElementById('documentFile')?.files[0]?.name
-            };
-
-            console.log('Course Data:', courseData);
-            alert('Course published successfully!');
-            this.reset();
-            tinymce.get('description').setContent('');
-            contentInputDiv.classList.add('d-none');
-            contentInputDiv.innerHTML = '';
-        });
-    </script>
-    
+    </script> -->
 </body>
 </html>

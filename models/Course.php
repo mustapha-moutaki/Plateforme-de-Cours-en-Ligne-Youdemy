@@ -14,16 +14,15 @@ class Course extends Model {
     // Method to create a new course
    // In Course Model (Models/Course.php)
 
-    public function addCourse($title, $content, $meta_description, $category_id, $content_type, $content_data) {
+    public function addCourse($title, $content, $meta_description, $category_id, $content_data) {
             $sql = "INSERT INTO courses (title, content, meta_description, category_id, content_type, content_data)
-                    VALUES (:title, :content, :meta_description, :category_id, :content_type, :content_data)";
+                    VALUES (:title, :content, :meta_description, :category_id, :content_data)";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([
                 ':title' => $title,
                 ':content' => $content,
                 ':meta_description' => $meta_description,
                 ':category_id' => $category_id,
-                ':content_type' => $content_type,
                 ':content_data' => $content_data
             ]);
             return $this->pdo->lastInsertId(); // Returns the last inserted course ID
