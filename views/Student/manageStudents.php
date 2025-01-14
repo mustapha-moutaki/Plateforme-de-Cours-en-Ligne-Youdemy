@@ -1,4 +1,44 @@
+<?php
+require_once '../../vendor/autoload.php';
+use Config\Database; 
+use Models\Student; 
 
+// Get the connection instance
+$pdo = Database::makeConnection();  // Ensure the connection is successful
+
+try {
+    // Create an instance of Category model
+    $studentModel = new student($pdo);
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+
+// Fetch all categories
+$getAllStudent = $studentModel->getAllStudent();
+
+// If there's a delete request, process it
+if (isset($_GET['delete_id'])) {
+    $deleteId = $_GET['delete_id'];
+    if ($TeacherModel->deleteTeacher($deleteId)) {
+        header('Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/teacher/manageTeachers.php');
+        exit();
+    } else {
+        echo "Failed to delete the teacher.";
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
+  $updateId = $_POST['student_id'];
+  $statusName = $_POST['status'];
+  if ($studentModel->updateStatus($updateId, $statusName)) {
+    header("Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/teacher/manageTeachers.php");
+  }
+}
+
+
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -62,9 +102,10 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <?php foreach($getAllStudent as $student): ?>
                     <tr>
                     <td>
-                        <p style="text-align:center;">1</p>
+                        <p style="text-align:center;"><?php echo $student['id'] ?></p>
                       </td>
                       <td>
                         <div class="d-flex px-2 py-1">
@@ -78,31 +119,35 @@
                       <td>
                         <div class="d-flex px-2 py-1">
                           <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">John Michael</h6>
-                            <p class="text-xs text-secondary mb-0">john@creative-tim.com</p>
+                            <h6 class="mb-0 text-sm"><?php echo $student['username'] ?></h6>
+                            <p class="text-xs text-secondary mb-0"><?php echo $student['email'] ?></p>
                           </div>
                         </div>
                       </td>
                       <td>
-                    <select class="form-select form-select-sm">
-                      <option value="active" selected>Active</option>
-                      <option value="suspended">Suspended</option>
-                      <option value="pending">Pending</option>
+                      <form action="" method="POST">
+                        <input type="hidden" name="student_id" value="<?= $student['id']; ?>">
+                      <select class="form-select form-select-sm" name="status">
+                  <option value="active" <?php echo ($student['status'] === 'active') ? 'selected' : ''; ?>>Active</option>
+                  <option value="suspended" <?php echo ($student['status'] === 'suspended') ? 'selected' : ''; ?>>Suspended</option>
                     </select>
+                    <button type="submit" name="update_status" class="btn btn-primary px-4 py-1 mt-2">
+                      Save
+                    </button>
+                  </form>
                   </td>
                   <td>
-                    <select class="form-select form-select-sm">
-                      <option value="admin">Admin</option>
-                      <option value="teacher" selected>Teacher</option>
-                      <option value="student">Student</option>
-                    </select>
-                  </td>
+                    <div class="d-flex flex-column justify-content-center align-items-center">
+                      <p class="text-xs text-secondary mb-0">Student</p>
+                    </div>
+                      </td>
                   <td class="d-flex justify-content-center align-items-center">
            <button class="btn btn-danger btn-sm">
          <i class="bi bi-trash"></i> Delete
                 </button>
                       </td>
                     </tr>
+                    <?php endforeach; ?>
                   </tbody>
                 </table>
               </div>

@@ -77,4 +77,27 @@ abstract class Model {
         $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+
+    
+        public function countStudent($table) {
+            $pdo = Database::makeConnection();
+            $sql = "SELECT COUNT(*) FROM $table";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchColumn();
+        }
+        
+
+     //select
+     public function selectStudent($table, $columns = "*", $where = "role = 'student'", $params = []) {
+        $pdo = Database::makeconnection();
+        $sql = "SELECT $columns FROM $table";
+        if ($where) {
+            $sql .= " WHERE $where";
+        }
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
