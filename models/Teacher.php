@@ -17,7 +17,20 @@ use PDO;
             return $this->countTeacher('users');
         }
 
-       
+
+
+        public function deleteTeacher($id) {
+            return $this->delete($this->table, 'id', $id);
+        }
+
+        
+        public function getAllTeachers() {
+            return $this->selectTeachers($this->table);
+        }
+
+        public function updateStatus($id, $status) {
+            return $this->update($this->table, ['status' => $status], 'id', $id);
+        }
 
     }
 

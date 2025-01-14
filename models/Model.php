@@ -53,7 +53,6 @@ abstract class Model {
     public function count($table) {
         $pdo = Database::makeConnection(); 
         $sql = "SELECT COUNT(*) FROM $table"; 
-        // $sql = "SELECT COUNT(*) FROM $table WHERE role = 'teacher'";
         $stmt = $pdo->prepare($sql); 
         $stmt->execute();  
         return $stmt->fetchColumn();  
@@ -61,10 +60,21 @@ abstract class Model {
 
     public function countTeacher($table) {
         $pdo = Database::makeConnection(); 
-        // $sql = "SELECT COUNT(*) FROM $table"; 
         $sql = "SELECT COUNT(*) FROM $table WHERE role = 'teacher'";
         $stmt = $pdo->prepare($sql); 
         $stmt->execute();  
         return $stmt->fetchColumn();  
+    }
+
+     //select
+     public function selectTeachers($table, $columns = "*", $where = "role = 'teacher'", $params = []) {
+        $pdo = Database::makeconnection();
+        $sql = "SELECT $columns FROM $table";
+        if ($where) {
+            $sql .= " WHERE $where";
+        }
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
