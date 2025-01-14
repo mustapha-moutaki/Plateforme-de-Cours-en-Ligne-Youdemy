@@ -27,7 +27,6 @@ if (isset($_GET['delete_id'])) {
     }
 }
 
-
 ?>
 
 <!DOCTYPE html>
@@ -75,7 +74,7 @@ if (isset($_GET['delete_id'])) {
                   </tr>
                 </thead>
                 <tbody>
-                  <!-- Example row -->
+               
                   <?php  foreach ($getAllTags as $tag):?>
                   <tr>
                     <td class="text-center"><?= $tag['id'] ?></td>
@@ -86,7 +85,7 @@ if (isset($_GET['delete_id'])) {
                     </td>
                   </tr>
                   <?php  endforeach;?>
-                  <!-- More rows can go here -->
+                 
                 </tbody>
               </table>
             </div>
