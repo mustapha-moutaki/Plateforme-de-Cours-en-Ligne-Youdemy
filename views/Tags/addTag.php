@@ -1,3 +1,31 @@
+<?php
+require_once '../../vendor/autoload.php';  // Autoload necessary classes
+use Config\Database;
+use Models\Tag;  
+
+
+$db = new Database();
+// Create an instance of the Category model
+$tagModel = new Tag();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addTag'])) {
+    $tagName = htmlspecialchars(trim($_POST['tag']));
+
+    if (!empty($tagName)) {
+
+        $tagModel->createTag($tagName);
+
+        header('Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/tags/addTag.php');
+        exit();
+    } else {
+        echo "tag name cannot be empty!";
+    }
+
+}
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,13 +55,13 @@
       </div>
 
       <!-- Tag Addition Form -->
-      <form action="add_tag.php" method="POST">
+      <form  method="POST">
         <div class="mb-3">
-          <input type="text" class="form-control" id="tagName" name="tagName" required placeholder="Enter tag name" autocomplete="off">
+          <input type="text" class="form-control" id="tagName" name="tag" required placeholder="Enter tag name" autocomplete="off">
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" class="btn btn-info w-100">Add Tag</button>
+        <button type="submit" class="btn btn-info w-100" name ="addTag">Add Tag</button>
       </form>
     </div>
   </div>

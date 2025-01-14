@@ -65,7 +65,6 @@ CREATE TABLE IF NOT EXISTS course_reviews (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- إنشاء الفهارس لتحسين الأداء
 CREATE INDEX idx_course_title ON courses(title);
 CREATE INDEX idx_tag_name ON tags(name);
 CREATE INDEX idx_category_name ON categories(name);

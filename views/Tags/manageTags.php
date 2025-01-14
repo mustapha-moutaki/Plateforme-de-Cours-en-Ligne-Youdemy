@@ -1,3 +1,35 @@
+<?php
+require_once '../../vendor/autoload.php';  // Autoload necessary classes
+use Config\Database;  // Use the correct namespace for Database
+use Models\Tag;  // Import the Category model
+
+// Get the connection instance
+$pdo = Database::makeConnection();  // Ensure the connection is successful
+
+try {
+    // Create an instance of Category model
+    $TagModel = new Tag($pdo);
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+
+// Fetch all categories
+$getAllTags = $TagModel->getAllTags();
+
+// If there's a delete request, process it
+if (isset($_GET['delete_id'])) {
+    $deleteId = $_GET['delete_id'];
+    if ($TagModel->deleteTag($deleteId)) {
+        header('Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/Tags/manageTags.php');
+        exit();
+    } else {
+        echo "Failed to delete the Tag.";
+    }
+}
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -44,22 +76,16 @@
                 </thead>
                 <tbody>
                   <!-- Example row -->
+                  <?php  foreach ($getAllTags as $tag):?>
                   <tr>
-                    <td class="text-center">1</td>
-                    <td>Technology</td>
+                    <td class="text-center"><?= $tag['id'] ?></td>
+                    <td><?= $tag['name'] ?></td>
                     <td class="text-center">
-                      <button class="btn btn-sm btn-warning me-2">Edit</button>
-                      <button class="btn btn-sm btn-danger">Delete</button>
+                      <button class="btn btn-sm btn-warning me-2"> <a href="update_tag.php?update_tag=<?= $tag['id']; ?>">Edit</a></button>
+                      <button class="btn btn-sm btn-danger"><a href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/Tags/manageTags.php?delete_id=<?php echo $tag['id']; ?>" onclick="return confirm('Are you sure you want to delete this tag?')">Delete</a></button>
                     </td>
                   </tr>
-                  <tr>
-                    <td class="text-center">2</td>
-                    <td>Health</td>
-                    <td class="text-center">
-                      <button class="btn btn-sm btn-warning me-2">Edit</button>
-                      <button class="btn btn-sm btn-danger">Delete</button>
-                    </td>
-                  </tr>
+                  <?php  endforeach;?>
                   <!-- More rows can go here -->
                 </tbody>
               </table>
