@@ -14,7 +14,6 @@
 <?php
  include_once '../../public/components/header.php';
 ?>
-
   <div class="container-fluid py-5">
     <div class="row">
       <!-- Sidebar Column -->

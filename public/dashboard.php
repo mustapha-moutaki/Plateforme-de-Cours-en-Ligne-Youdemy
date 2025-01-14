@@ -196,8 +196,6 @@ include_once './components/sidebar.php';
           </div>
         </div>
       </div>
-
-      
       <!-- Course Card 4 -->
       <div class="col-md-4 mb-4 course-card" data-category="web">
         <div class="card shadow-sm">

@@ -15,7 +15,6 @@
     include_once '../../public/components/header.php';
   ?>
  <?php
- 
     include_once '../../public/components/sidebar.php';
   ?>
   <div class="container d-flex justify-content-center align-items-center vh-100">
