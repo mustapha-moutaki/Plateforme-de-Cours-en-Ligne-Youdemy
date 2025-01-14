@@ -1,10 +1,9 @@
 <?php
 require_once '../../vendor/autoload.php';  // Autoload necessary classes
-use Config\Database;  // Use the correct namespace for Database
-use Models\Category;  // Import the Category model
+use Config\Database;  
+use Models\Category; 
 
-// Get the connection instance
-$pdo = Database::makeConnection();  // Ensure the connection is successful
+$pdo = Database::makeConnection();  
 
 try {
     // Create an instance of Category model
