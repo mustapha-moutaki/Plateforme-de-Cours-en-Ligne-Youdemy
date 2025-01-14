@@ -63,14 +63,14 @@
           </a>
         </li>
         <li class="nav-item">
-        <a class="nav-link text-dark" href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/teacher/manageTeachers.php">
+        <a class="nav-link text-dark" href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/Categories/manageCategories.php">
         <i class="material-symbols-rounded opacity-5">school</i>
      <span>Manage Categories</span>
         </a>
 
         </li>
         <li class="nav-item">
-  <a class="nav-link text-dark" href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/teacher/manageTeachers.php">
+  <a class="nav-link text-dark" href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/tags/manageTags.php">
     <i class="material-symbols-rounded opacity-5">label</i>
     <span class="nav-link-text ms-1">Manage Tags</span>
   </a>

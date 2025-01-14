@@ -27,7 +27,7 @@
       <div class="col-md-8">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h2 class="text-dark">Manage Categories</h2>
-          <button class="btn btn-success" id="addCategoryButton">Add Category</button>
+         <a href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/Categories/addCategory.php"> <button class="btn btn-success" id="addCategoryButton">Add Category</button></a>
         </div>
 
         <div class="card shadow">

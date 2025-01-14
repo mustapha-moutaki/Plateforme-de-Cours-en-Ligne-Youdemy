@@ -28,7 +28,7 @@
       <div class="col-md-8">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h2 class="text-dark">Manage Tags</h2>
-          <button class="btn btn-primary" id="addTagButton">Add Tag</button>
+          <a href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/tags/addTag.php"><button class="btn btn-primary" id="addTagButton">Add Tag</button></a>
         </div>
 
         <div class="card shadow">
