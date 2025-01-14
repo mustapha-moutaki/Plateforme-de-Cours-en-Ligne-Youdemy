@@ -15,7 +15,6 @@ $tagModel = new Tag($pdo);
 $courseModel = new Course($pdo);
 $teacherModel = new Teacher($pdo);
 
-
 // Get the counts of categories and tags
 $categoryCount = $categoryModel->countCategories();   
 $tagCount = $tagModel->countTags();  
