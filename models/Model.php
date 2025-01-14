@@ -53,6 +53,16 @@ abstract class Model {
     public function count($table) {
         $pdo = Database::makeConnection(); 
         $sql = "SELECT COUNT(*) FROM $table"; 
+        // $sql = "SELECT COUNT(*) FROM $table WHERE role = 'teacher'";
+        $stmt = $pdo->prepare($sql); 
+        $stmt->execute();  
+        return $stmt->fetchColumn();  
+    }
+
+    public function countTeacher($table) {
+        $pdo = Database::makeConnection(); 
+        // $sql = "SELECT COUNT(*) FROM $table"; 
+        $sql = "SELECT COUNT(*) FROM $table WHERE role = 'teacher'";
         $stmt = $pdo->prepare($sql); 
         $stmt->execute();  
         return $stmt->fetchColumn();  

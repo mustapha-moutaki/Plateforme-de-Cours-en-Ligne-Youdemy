@@ -2,14 +2,39 @@
 require_once '../vendor/autoload.php';
 
 use Config\Database;
-
+use Models\Tag;
+use Models\Category;
+use Models\Course;
+use Models\Teacher;
 $pdo = new database();
 $conn = $pdo ->makeconnection();
-if($conn){
-    echo"--------------------------------------------------------is connected------------------------------------";
-}else{
-    echo"is not connected-------------------------------------------";
-}
+
+
+
+
+// Create an instance of the Category model
+$categoryModel = new Category($pdo);
+$tagModel = new Tag($pdo);
+// $userModel = new user($pdo);
+$courseModel = new Course($pdo);
+$teacherModel = new Teacher($pdo);
+
+
+// Get the counts of categories and tags
+$categoryCount = $categoryModel->countCategories();   
+$tagCount = $tagModel->countTags();  
+$teacherCount = $teacherModel->countTeachers();  
+$courseCount = $courseModel->countCourses();   
+// $allteacher = $teacherModel->getAllCourses();
+
+// $articleModel = new Article($pdo);
+// $mostViewedArticles = $articleModel->getMostViewedArticles();
+
+// $authorModel = new Author($pdo);
+// $top3Authors = $authorModel->getTop3AuthorsByViews();
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,7 +75,7 @@ include_once './components/sidebar.php';
         <div class="ms-3">
           <h3 class="mb-0 h4 font-weight-bolder">Dashboard</h3>
           <p class="mb-4">
-            Check the sales, value and bounce rate by country.
+            Check the courses, Teachers and Students.
           </p>
         </div>
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
@@ -58,8 +83,8 @@ include_once './components/sidebar.php';
             <div class="card-header p-3">
               <div class="d-flex justify-content-between">
                 <div>
-                  <p class="text-sm mb-0 text-uppercase text-primary font-weight-bold">Nombre total de cours</p>
-                  <h4 class="mb-0 text-dark">250</h4>
+                  <p class="text-sm mb-0 text-uppercase text-primary font-weight-bold">Total Number of Courses</p>
+                  <h4 class="mb-0 text-dark"><?php echo $courseCount; ?></h4>
                 </div>
                 <div class="icon icon-md icon-shape bg-gradient-primary text-white shadow text-center rounded-circle">
                   <i class="material-symbols-rounded">menu_book</i>
@@ -68,10 +93,7 @@ include_once './components/sidebar.php';
             </div>
             <hr class="horizontal my-0 bg-primary">
             <div class="card-footer p-3">
-              <p class="mb-0 text-sm text-secondary">
-                <span class="text-success font-weight-bold">+10% </span>
-                croissance cette semaine
-              </p>
+             
             </div>
           </div>
           
@@ -81,8 +103,8 @@ include_once './components/sidebar.php';
             <div class="card-header p-3">
               <div class="d-flex justify-content-between">
                 <div>
-                  <p class="text-sm mb-0 text-uppercase text-info font-weight-bold">Nombre total de tags</p>
-                  <h4 class="mb-0 text-dark">500</h4>
+                  <p class="text-sm mb-0 text-uppercase text-info font-weight-bold">Total Number of Tags</p>
+                  <h4 class="mb-0 text-dark"><?php echo $tagCount; ?></h4>
                 </div>
                 <div class="icon icon-md icon-shape bg-gradient-info text-white shadow text-center rounded-circle">
                   <i class="material-symbols-rounded">label</i>
@@ -91,10 +113,7 @@ include_once './components/sidebar.php';
             </div>
             <hr class="horizontal my-0 bg-info">
             <div class="card-footer p-3">
-              <p class="mb-0 text-sm text-secondary">
-                <span class="text-success font-weight-bold">+15% </span>
-                ajoutés cette semaine
-              </p>
+              
             </div>
           </div>
           
@@ -105,8 +124,8 @@ include_once './components/sidebar.php';
             <div class="card-header p-3">
               <div class="d-flex justify-content-between">
                 <div>
-                  <p class="text-sm mb-0 text-uppercase text-warning font-weight-bold">Nombre de catégories</p>
-                  <h4 class="mb-0 text-dark">50</h4>
+                  <p class="text-sm mb-0 text-uppercase text-warning font-weight-bold">Number of Categories</p>
+                  <h4 class="mb-0 text-dark"><?php echo $categoryCount; ?></h4>
                 </div>
                 <div class="icon icon-md icon-shape bg-gradient-warning text-white shadow text-center rounded-circle">
                   <i class="material-symbols-rounded">category</i>
@@ -115,10 +134,7 @@ include_once './components/sidebar.php';
             </div>
             <hr class="horizontal my-0 bg-warning">
             <div class="card-footer p-3">
-              <p class="mb-0 text-sm text-secondary">
-                <span class="text-danger font-weight-bold">-5% </span>
-                cette semaine
-              </p>
+             
             </div>
           </div>
           
@@ -128,8 +144,8 @@ include_once './components/sidebar.php';
             <div class="card-header p-3">
               <div class="d-flex justify-content-between">
                 <div>
-                  <p class="text-sm mb-0 text-uppercase text-success font-weight-bold">Nombre total d'enseignants</p>
-                  <h4 class="mb-0 text-dark">120</h4>
+                  <p class="text-sm mb-0 text-uppercase text-success font-weight-bold">Total Number of Teachers</p>
+                  <h4 class="mb-0 text-dark"><?php echo $teacherCount; ?></h4>
                 </div>
                 <div class="icon icon-md icon-shape bg-gradient-success text-white shadow text-center rounded-circle">
                   <i class="material-symbols-rounded">school</i>
@@ -138,10 +154,7 @@ include_once './components/sidebar.php';
             </div>
             <hr class="horizontal my-0 bg-success">
             <div class="card-footer p-3">
-              <p class="mb-0 text-sm text-secondary">
-                <span class="text-success font-weight-bold">+8% </span>
-                cette semaine
-              </p>
+              
             </div>
           </div>
           
