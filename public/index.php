@@ -76,8 +76,8 @@ $courses = $courseModel->getCourses($page, $limit);
         </div>
         <!-- Navigation: Login and Sign-up -->
         <div class="space-x-6">
-            <a href="#" class="text-white hover:underline text-lg">Login</a>
-            <a href="#" class="text-white hover:underline text-lg">Sign Up</a>
+            <a href="/Plateforme-de-Cours-en-Ligne-Youdemy/public/sign-up.php" class="text-white hover:underline text-lg">Login</a>
+            <a href="/Plateforme-de-Cours-en-Ligne-Youdemy/public/sign-up.php" class="text-white hover:underline text-lg">Sign Up</a>
         </div>
     </header>
 

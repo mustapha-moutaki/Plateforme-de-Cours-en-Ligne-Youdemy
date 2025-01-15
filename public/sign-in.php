@@ -1,3 +1,54 @@
+<?php
+require_once '../vendor/autoload.php';
+
+use App\Config\Database;
+use App\Models\User;
+
+session_start();
+
+$db = Database::makeconnection();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die("error of checking csrf code!");
+    }
+
+    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
+    $password = $_POST['password']; 
+
+    try {
+        $user = new User($db);
+        $userData = $user->findByEmail($email);
+
+        if ($userData && password_verify($password, $userData['password'])) {
+            $_SESSION['user_id'] = $userData['id']; 
+            $_SESSION['email'] = $userData['email'];
+
+                if($email ==='mustaphastar06@gmail.com' && $password=123123){
+                    header('Location:../../admin/index.php');
+                    exit;
+                }else{
+                    header('Location:../../admin/index.php');
+                }
+
+
+
+        }else{
+            echo"incorrect infos, please try again";
+        }
+        //     echo "login with success";
+
+        //     header('Location:../../admin/index.php');
+        //     exit;
+        // } else {
+        //     echo "incorrect infos, please try again";
+        // }
+
+    } catch (\Exception $e) {
+        echo "error: " . $e->getMessage();
+    }
+}
+?>
 
 <!DOCTYPE html>
 <html lang="en">

@@ -1,3 +1,116 @@
+<?php
+require_once '../vendor/autoload.php';
+use Config\Database;
+use Models\User;
+use Models\FormValidator;
+Database::makeconnection();
+session_start();
+
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup'])) {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die("CSRF token validation failed!");
+    }
+
+    $validator = new FormValidator();
+    $validator->validateUsername($username);
+    $validator->validateEmail($email);
+    $validator->validatePassword($password);
+
+
+
+    $username = htmlspecialchars(trim($_POST['username']));
+    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
+    $password = $_POST['password'];
+
+    if (empty($username) || empty($email) || empty($password)) {
+        die("يجب ملء جميع الحقول.");
+    }
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        die("البريد الإلكتروني غير صالح.");
+    }
+
+    if ($validator->isValid()) {
+      $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+      
+     
+      try {
+          $user = new User(Database::makeconnection());
+          $_SESSION['username'] = $username;
+
+          if ($user->register($username, $email, $hashedPassword)) {
+              $_SESSION['user_id'] = $user->getPdo()->lastInsertId();
+              header('Location:../../admin/index.php');
+              exit;
+          } else {
+              echo "please try again";
+          }
+      } catch (\Exception $e) {
+          echo "Error: " . $e->getMessage();
+      }
+  } else {
+      
+      foreach ($validator->getErrors() as $error) {
+          echo "<p class='error'>$error</p>";
+      }
+  }
+}
+?>
+
+<!--?php
+require_once '../vendor/autoload.php';
+use Config\Database;
+use Models\User;
+
+Database::makeconnection();
+// Start the session for CSRF token handling
+session_start();
+// Generate a CSRF token if it's not already set
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+// Check if the form is submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup'])) {
+
+    // Check the CSRF token to prevent CSRF attacks
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die("CSRF token validation failed!");
+    }
+
+    $username = htmlspecialchars(trim($_POST['username']));
+    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
+    $password = $_POST['password'];
+
+    try {
+        // Instantiate the User class
+        $user = new User(Database::makeconnection());
+        $_SESSION['username'] = $username;
+        // Register the user
+        if ($user->register($username, $email, $password)) {
+            echo "User registered successfully!";
+            $userId = $user->getPdo()->lastInsertId();
+    
+            $_SESSION['user_id'] = $userId;
+            $_SESSION['username'] = $username;
+        
+            header('Location:../../admin/index.php');
+            exit;
+        } else {
+            echo "Error: User could not be registered.";
+        }
+    } catch (\Exception $e) {
+        echo "Error: " . $e->getMessage();
+    }
+    
+}
+
+
+?-->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -40,21 +153,22 @@
                   <p class="mb-0">Enter your email and password to register</p>
                 </div>
                 <div class="card-body">
-                  <form role="form">
+                  <form method="POST">
                     <div class="input-group input-group-outline mb-3">
+                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                       <label class="form-label">Name</label>
-                      <input type="text" class="form-control">
+                      <input type="text" class="form-control" name="username">
                     </div>
                     <div class="input-group input-group-outline mb-3">
                       <label class="form-label">Email</label>
-                      <input type="email" class="form-control">
+                      <input type="email" class="form-control" name="email">
                     </div>
                     <div class="input-group input-group-outline mb-3">
                       <label class="form-label">Password</label>
-                      <input type="password" class="form-control">
+                      <input type="password" class="form-control" name="password">
                     </div>
                     <div class="text-center">
-                      <button type="button" class="btn btn-lg bg-gradient-dark btn-lg w-100 mt-4 mb-0">Sign Up</button>
+                      <button type="submit" class="btn btn-lg bg-gradient-dark btn-lg w-100 mt-4 mb-0" name="signup">Sign Up</button>
                     </div>
                   </form>
                 </div>
