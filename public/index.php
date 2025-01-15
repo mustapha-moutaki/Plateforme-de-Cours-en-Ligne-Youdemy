@@ -34,6 +34,23 @@ $getAllCategories = $CategoryModel->getAllCategories();
 $getAllTags = $tagModel->getAllTags();
 $getAllCourses = $courseModel->getAllCourses();
 
+// Get the total number of courses
+/*
+$totalCourses = count($courseModel->getAllCourses());
+
+
+// Set the number of courses per page
+$limit = 6;
+
+// Get the current page from the query parameter or default to 1
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+
+// Calculate the total number of pages
+$totalPages = ceil($totalCourses / $limit);
+
+// Get the paginated courses for the current page
+$courses = $courseModel->getCourses($page, $limit);
+*/
 
 // $AllCategoriesName = $categoryModel ->getAllCategoriesName();
 ?>
@@ -146,6 +163,8 @@ $getAllCourses = $courseModel->getAllCourses();
         <?php endforeach; ?>
     </div>
 </section>
+
+
 
 <div id="paginationControls" class="flex justify-center mt-6 space-x-4">
     <?php

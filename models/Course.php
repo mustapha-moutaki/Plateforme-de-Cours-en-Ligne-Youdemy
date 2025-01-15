@@ -105,6 +105,30 @@ class DocumentCourse extends Course {
         ]);
         return $this->pdo->lastInsertId();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function getCourses($page, $limit) {
+        $offset = ($page - 1) * $limit;
+        $sql = "SELECT * FROM courses LIMIT :limit OFFSET :offset";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
 }
 
 ?>
