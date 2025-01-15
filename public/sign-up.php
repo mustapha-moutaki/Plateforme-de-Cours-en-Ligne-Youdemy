@@ -1,9 +1,12 @@
 <?php
 require_once '../vendor/autoload.php';
+
 use Config\Database;
-use Models\User;
+use Models\AbstractUser;
 use Models\FormValidator;
-Database::makeconnection();
+use Models\User;
+
+$pdo = Database::makeconnection();
 session_start();
 
 if (!isset($_SESSION['csrf_token'])) {
@@ -15,49 +18,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup'])) {
         die("CSRF token validation failed!");
     }
 
+    // Sanitize input
+    $username = htmlspecialchars(trim($_POST['username']));
+    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
+    $password = $_POST['password'];
+    $userType = $_POST['user_type'];
+
+    // Check for empty fields
+    if (empty($username) || empty($email) || empty($password) || empty($userType)) {
+        die("Please fill all inputs.");
+    }
+
     $validator = new FormValidator();
     $validator->validateUsername($username);
     $validator->validateEmail($email);
     $validator->validatePassword($password);
 
-
-
-    $username = htmlspecialchars(trim($_POST['username']));
-    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
-    $password = $_POST['password'];
-
-    if (empty($username) || empty($email) || empty($password)) {
-        die("يجب ملء جميع الحقول.");
-    }
-
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        die("البريد الإلكتروني غير صالح.");
-    }
-
+    // Check for validation errors
     if ($validator->isValid()) {
-      $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-      
-     
-      try {
-          $user = new User(Database::makeconnection());
-          $_SESSION['username'] = $username;
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-          if ($user->register($username, $email, $hashedPassword)) {
-              $_SESSION['user_id'] = $user->getPdo()->lastInsertId();
-              header('Location:../../admin/index.php');
-              exit;
-          } else {
-              echo "please try again";
-          }
-      } catch (\Exception $e) {
-          echo "Error: " . $e->getMessage();
-      }
-  } else {
-      
-      foreach ($validator->getErrors() as $error) {
-          echo "<p class='error'>$error</p>";
-      }
-  }
+        try {
+            $user = new User(Database::makeconnection());
+            $_SESSION['username'] = $username;
+
+            if ($user->register($username, $email, $hashedPassword, $userType)) {
+                $_SESSION['user_id'] = $user->getPdo()->lastInsertId();
+                header('Location: /Plateforme-de-Cours-en-Ligne-Youdemy/public/dashboard.php');
+                exit;
+            } else {
+                echo "Please try again.";
+            }
+        } catch (\Exception $e) {
+            echo "Error: " . $e->getMessage();
+        }
+    } else {
+        foreach ($validator->getErrors() as $error) {
+            echo "<p class='error'>$error</p>";
+        }
+    }
 }
 ?>
 
@@ -167,6 +166,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup'])) {
                       <label class="form-label">Password</label>
                       <input type="password" class="form-control" name="password">
                     </div>
+
+                    <div class="form-group">
+    <label for="user_type">Choose User Type:</label><br>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" id="teacher" name="user_type" value="teacher" required>
+        <label class="form-check-label" for="teacher">Teacher</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" id="student" name="user_type" value="student">
+        <label class="form-check-label" for="student">Student</label>
+    </div>
+</div>
+
+
+
+
+
+
+
+
                     <div class="text-center">
                       <button type="submit" class="btn btn-lg bg-gradient-dark btn-lg w-100 mt-4 mb-0" name="signup">Sign Up</button>
                     </div>

@@ -1,7 +1,7 @@
 <?php
 namespace Models;
 
-abstract class User {
+abstract class AbstractUser {
     protected $pdo;
     protected $table = "users";
     
@@ -35,58 +35,12 @@ abstract class User {
     //     return false;
     // }
 
-    // sign up
-    public function register($username, $email, $password) {
-    
-        if (empty($username) || empty($email) || empty($password)) {
-            throw new Exception("All fields are required.");
-        }
-    
-    
-        $stmt = $this->pdo->prepare("SELECT id FROM users WHERE email = :email");
-        $stmt->bindParam(':email', $email);
-        $stmt->execute();
-        if ($stmt->rowCount() > 0) {
-            throw new Exception("Email already exists.");
-        }
-    
-    
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-    
-        
-        $query = "INSERT INTO users (username, email, password) VALUES (:username, :email, :password)";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->bindParam(':username', $username);
-        $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':password', $hashedPassword);
-    
-        if ($stmt->execute()) {
-            return true; 
-        } else {
-            throw new Exception("Database insertion failed."); 
-        }
-    }
+     // Method to register a user
+     abstract public function register($username, $email, $password, $userType);
 
 
     // Method to validate the user login credentials
-    public function login($email, $password) {
-        // Validate the input data
-        if (empty($email) || empty($password)) {
-            throw new Exception("Email and password are required.");
-        }
-
-        // Fetch the user data from the database
-        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = :email");
-        $stmt->bindParam(':email', $email);
-        $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($user && password_verify($password, $user['password'])) {
-            return $user; // Return user data if credentials are correct
-        } else {
-            throw new Exception("Invalid email or password.");
-        }
-    }
+    abstract public function login($email, $password);
 
     
 
@@ -107,5 +61,6 @@ abstract class User {
     //     return false;
     // }
 }
+
 
 ?>

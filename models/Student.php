@@ -1,7 +1,6 @@
 <?php
 namespace Models;
 
-namespace Models;
 use Models\Model;
 use Config\Database;
 use PDO;

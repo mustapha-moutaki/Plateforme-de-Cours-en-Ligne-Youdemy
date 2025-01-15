@@ -1,8 +1,8 @@
 <?php
 require_once '../vendor/autoload.php';
 
-use App\Config\Database;
-use App\Models\User;
+use Config\Database;
+use Models\User;
 
 session_start();
 
