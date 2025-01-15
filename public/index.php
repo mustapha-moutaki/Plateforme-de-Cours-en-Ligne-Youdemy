@@ -147,6 +147,29 @@ $getAllCourses = $courseModel->getAllCourses();
     </div>
 </section>
 
+<div id="paginationControls" class="flex justify-center mt-6 space-x-4">
+    <?php
+    // Check if there is more than 1 page
+    if ($totalPages > 1) {
+        // Create the "Previous" link if not on the first page
+        if ($page > 1) {
+            echo '<a href="landing-page.php?page=' . ($page - 1) . '" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Previous</a>';
+        }
+
+        // Generate page links dynamically
+        for ($i = 1; $i <= $totalPages; $i++) {
+            $activeClass = ($i === $page) ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600';
+            echo '<a href="landing-page.php?page=' . $i . '" class="' . $activeClass . ' px-4 py-2 rounded-md hover:bg-indigo-700 hover:text-white">' . $i . '</a>';
+        }
+
+        // Create the "Next" link if not on the last page
+        if ($page < $totalPages) {
+            echo '<a href="landing-page.php?page=' . ($page + 1) . '" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Next</a>';
+        }
+    }
+    ?>
+</div>
+
 
 
 
