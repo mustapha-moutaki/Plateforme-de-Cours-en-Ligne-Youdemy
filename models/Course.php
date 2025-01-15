@@ -14,20 +14,20 @@ class Course extends Model {
     // Method to create a new course
    // In Course Model (Models/Course.php)
 
-    public function addCourse($title, $content, $meta_description, $category_id, $content_data) {
-            $sql = "INSERT INTO courses (title, content, meta_description, category_id, content_type, content_data)
-                    VALUES (:title, :content, :meta_description, :category_id, :content_data)";
+    public function addCourse($title, $content, $meta_description, $category_id) {
+            $sql = "INSERT INTO courses (title, content, meta_description, category_id)
+                    VALUES (:title, :content, :meta_description, :category_id)";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([
                 ':title' => $title,
                 ':content' => $content,
                 ':meta_description' => $meta_description,
                 ':category_id' => $category_id,
-                ':content_data' => $content_data
+                ':content' => $content
             ]);
             return $this->pdo->lastInsertId(); // Returns the last inserted course ID
         }
-
+        
         public function addCourseTag($course_id, $tag_id) {
             $sql = "INSERT INTO course_tag (course_id, tag_id) VALUES (:course_id, :tag_id)";
             $stmt = $this->pdo->prepare($sql);
@@ -71,4 +71,37 @@ class Course extends Model {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
+
+class VideoCourse extends Course {
+    public function addCourse($title, $content, $meta_description, $category_id) {
+        $sql = "INSERT INTO video_courses (title, video_url, meta_description, category_id)
+                VALUES (:title, :video_url, :meta_description, :category_id)";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':title' => $title,
+            ':video_url' => $content,
+            ':meta_description' => $meta_description,
+            ':category_id' => $category_id,
+        ]);
+        return $this->pdo->lastInsertId();
+    }
+}
+
+
+
+class DocumentCourse extends Course {
+    public function addCourse($title, $content, $meta_description, $category_id) {
+        $sql = "INSERT INTO document_courses (title, document_path, meta_description, category_id)
+                VALUES (:title, :document_path, :meta_description, :category_id)";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':title' => $title,
+            ':document_path' => $content,
+            ':meta_description' => $meta_description,
+            ':category_id' => $category_id,
+        ]);
+        return $this->pdo->lastInsertId();
+    }
+}
+
 ?>

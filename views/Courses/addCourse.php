@@ -18,11 +18,11 @@ if (isset($_POST['add_course'])) {
     // Get form values
     echo"------------------------------------------------added-------------------------added";
     $title = $_POST['title'];
-    $content = $_POST['content']; // This will be the TinyMCE content
+    $content = $_POST['content'];
     $meta_description = $_POST['meta_description'];
     $category_id = $_POST['category'];
     $tags = $_POST['tags'] ?? [];
-    $content_type = $_POST['content_type']; // Type of content (video/document)
+    $content_type = $_POST['content_type'];
 
     // Initialize course model and create course
     $courseModel = new Course($pdo);
@@ -30,10 +30,10 @@ if (isset($_POST['add_course'])) {
     try {
         $pdo->beginTransaction();
 
-        // Determine content based on type (video or document)
-        $content_data = '';
+        
+        $content = '';
         if ($content_type === 'video') {
-            $content_data = $_POST['video_url']; // Get video URL if content type is video
+            $content = $_POST['video_url']; 
         } elseif ($content_type === 'document') {
             // Handle document upload
             if (isset($_FILES['document_file']) && $_FILES['document_file']['error'] === UPLOAD_ERR_OK) {
@@ -52,7 +52,7 @@ if (isset($_POST['add_course'])) {
         }
 
         // Insert course data into database
-        $course_id = $courseModel->addCourse($title, $content, $meta_description, $category_id, $content_data);
+        $course_id = $courseModel->addCourse($title, $content, $meta_description, $category_id);
 
         // Add tags (if any) associated with the course
         if (!empty($tags)) {
@@ -136,10 +136,10 @@ if (isset($_POST['add_course'])) {
                                 </div>
 
                                 <!-- Description -->
-                                <div class="mb-3">
+                                <!-- <div class="mb-3">
                                     <label for="description" class="form-label fw-semibold">Course Description</label>
                                     <textarea class="form-control" id="description" name="content" required></textarea>
-                                </div>
+                                </div> -->
 
                                 <!-- Meta Description -->
                                 <div class="mb-3">
