@@ -7,7 +7,7 @@ use Models\Category;
 use Models\Course;
 use Models\Teacher;
 $pdo = new database();
-$conn = $pdo ->makeconnection();
+// $conn = $pdo ->makeconnection();
 
 $categoryModel = new Category($pdo);
 $tagModel = new Tag($pdo);
@@ -24,6 +24,7 @@ $courseCount = $courseModel->countCourses();
 try {
     $CategoryModel = new Category($pdo);
     $tagModel = new Tag($pdo);
+    $courseModel = new Course($pdo);
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
 }
@@ -31,6 +32,10 @@ try {
 // Fetch all categories
 $getAllCategories = $CategoryModel->getAllCategories();
 $getAllTags = $tagModel->getAllTags();
+$getAllCourses = $courseModel->getAllCourses();
+
+
+// $AllCategoriesName = $categoryModel ->getAllCategoriesName();
 ?>
 
 <!DOCTYPE html>
@@ -38,7 +43,7 @@ $getAllTags = $tagModel->getAllTags();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yudemy</title>
+    <title>Youdemy</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/heroicons.min.js"></script>
@@ -76,8 +81,8 @@ $getAllTags = $tagModel->getAllTags();
                 <div>
                     <label for="categoryFilter" class="text-lg text-gray-700">Category:</label>
                     <select id="categoryFilter" class="bg-gray-100 p-2 rounded-lg shadow-sm">
-                    <?php  foreach ($getAllCategories as $category):?>
                         <option value="">All</option>
+                        <?php  foreach ($getAllCategories as $category):?>
                         <option value=""><?php echo $category['name'] ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -86,8 +91,9 @@ $getAllTags = $tagModel->getAllTags();
                 <div>
                     <label for="tagFilter" class="text-lg text-gray-700">Tags:</label>
                     <select id="tagFilter" class="bg-gray-100 p-2 rounded-lg shadow-sm">
-                    <?php  foreach ($getAllTags as $tag):?>
+                    
                         <option value="">All</option>
+                        <?php  foreach ($getAllTags as $tag):?>
                         <option value="frontend"><?php echo $tag['name'] ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -106,45 +112,43 @@ $getAllTags = $tagModel->getAllTags();
 
     <!-- Featured Courses Section -->
     <section class="p-8 bg-gray-100">
-        <h2 class="text-3xl font-semibold text-center mb-6 text-indigo-800">Featured Courses</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="courseList">
-            <!-- Featured Course 1 -->
-            <div class="course bg-white shadow-lg rounded-lg overflow-hidden hover:scale-105 transform transition duration-300" data-category="web" data-tag="frontend">
-                <img src="https://via.placeholder.com/300x200" alt="Course 1" class="w-full h-48 object-cover">
+    <h2 class="text-3xl font-semibold text-center mb-6 text-indigo-800">Featured Courses</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="courseList">
+        <?php foreach ($getAllCourses as $course): ?>
+            <!-- Featured Course -->
+            <div 
+                class="course bg-white shadow-lg rounded-lg overflow-hidden hover:scale-105 transform transition duration-300"
+                data-category=" <?php 
+                $categoryName = ''; 
+               
+                foreach ($AllCategoriesName as $category) {
+                
+                    if ($category['id'] == $course['category_id']) {
+                        $categoryName = $category['categoryname']; 
+                        break; 
+                    }
+                }
+                echo $categoryName; 
+            ?>"
+                data-tag="<?php echo strtolower($course['tag_name']); ?>"
+            >
+                <img src="https://i.pinimg.com/736x/1b/7b/e2/1b7be209fee3fd17943a981b5508384e.jpg" 
+                     alt="Course Image" 
+                     class="w-full h-48 object-cover">
                 <div class="p-6">
-                    <h3 class="text-2xl font-semibold text-indigo-800">Web Development</h3>
-                    <p class="text-gray-600 mt-2">Learn how to build modern web applications using HTML, CSS, JavaScript, and frameworks.</p>
+                    <h3 class="text-2xl font-semibold text-indigo-800"><?php echo $course['title']; ?></h3>
+                    <p class="text-gray-600 mt-2"><?php echo $course['meta_description']; ?></p>
                     <div class="mt-4 flex justify-between items-center">
                         <button class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700">Learn More</button>
                     </div>
                 </div>
             </div>
+        <?php endforeach; ?>
+    </div>
+</section>
 
-            <!-- Featured Course 2 -->
-            <div class="course bg-white shadow-lg rounded-lg overflow-hidden hover:scale-105 transform transition duration-300" data-category="python" data-tag="backend">
-                <img src="https://via.placeholder.com/300x200" alt="Course 2" class="w-full h-48 object-cover">
-                <div class="p-6">
-                    <h3 class="text-2xl font-semibold text-indigo-800">Python Programming</h3>
-                    <p class="text-gray-600 mt-2">Start your programming journey with Python and build powerful applications.</p>
-                    <div class="mt-4 flex justify-between items-center">
-                        <button class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700">Learn More</button>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Featured Course 3 -->
-            <div class="course bg-white shadow-lg rounded-lg overflow-hidden hover:scale-105 transform transition duration-300" data-category="data" data-tag="machine-learning">
-                <img src="https://via.placeholder.com/300x200" alt="Course 3" class="w-full h-48 object-cover">
-                <div class="p-6">
-                    <h3 class="text-2xl font-semibold text-indigo-800">Data Science</h3>
-                    <p class="text-gray-600 mt-2">Learn data analysis, visualization, and machine learning techniques with Python and R.</p>
-                    <div class="mt-4 flex justify-between items-center">
-                        <button class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700">Learn More</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+
 
     <!-- Footer Section -->
     <footer class="bg-indigo-800 text-white text-center py-6 mt-12">

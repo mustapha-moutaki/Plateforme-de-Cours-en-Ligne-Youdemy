@@ -19,19 +19,22 @@ $getAllStudent = $studentModel->getAllStudent();
 // If there's a delete request, process it
 if (isset($_GET['delete_id'])) {
     $deleteId = $_GET['delete_id'];
-    if ($TeacherModel->deleteTeacher($deleteId)) {
-        header('Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/teacher/manageTeachers.php');
+    if ($studentModel->deleteStudent($deleteId)) {
+        header('Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/student/manageStudents.php');
         exit();
     } else {
-        echo "Failed to delete the teacher.";
+        echo "Failed to delete the student.";
     }
+
+    
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
   $updateId = $_POST['student_id'];
   $statusName = $_POST['status'];
   if ($studentModel->updateStatus($updateId, $statusName)) {
-    header("Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/teacher/manageTeachers.php");
+    header("Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/student/managestudents.php");
+    exit();
   }
 }
 
@@ -142,9 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
                     </div>
                       </td>
                   <td class="d-flex justify-content-center align-items-center">
-           <button class="btn btn-danger btn-sm">
-         <i class="bi bi-trash"></i> Delete
-                </button>
+                  <button class="btn btn-sm btn-danger"><a href="?delete_id=<?php echo $student['id']; ?>" onclick="return confirm('Are you sure you want to delete this student?')">Delete</a></button>
                       </td>
                     </tr>
                     <?php endforeach; ?>

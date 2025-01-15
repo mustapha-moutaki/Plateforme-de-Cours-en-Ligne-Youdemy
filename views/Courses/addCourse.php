@@ -42,7 +42,9 @@ if (isset($_POST['add_course'])) {
                 $fileDestPath = '../../uploads/' . $fileName;
 
                 if (move_uploaded_file($fileTmpPath, $fileDestPath)) {
-                    $content_data = $fileName; // Store document filename
+                    $content = $fileName;
+                    header('Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/courses/addCourse.php');
+                    echo"file added successfully ----------------------------------------";
                 } else {
                     throw new Exception("Failed to upload document.");
                 }
@@ -62,13 +64,14 @@ if (isset($_POST['add_course'])) {
         }
 
         $pdo->commit();
-        header("Location: http://localhost/devblog_dashboard/admin/index.php");
+        header("Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/courses/addCourse.php");
         exit;
 
     } catch (Exception $e) {
         $pdo->rollBack();
         echo "Error: " . $e->getMessage();
     }
+    var_dump($content);
 }
 ?>
 

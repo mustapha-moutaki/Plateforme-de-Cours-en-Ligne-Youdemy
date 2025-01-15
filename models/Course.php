@@ -3,10 +3,10 @@ namespace Models;
 
 use Models\Model;
 use PDO;
-
+//i have to chage class course to abstract course and n3iyt 3la tous lesmethodes createcourse  <<hna>>
 class Course extends Model {
     protected $table = 'courses';
-
+//<<han>>
     public function __construct($pdo) {
         $this->pdo = $pdo;
     }
@@ -14,6 +14,9 @@ class Course extends Model {
     // Method to create a new course
    // In Course Model (Models/Course.php)
 
+
+   //we can use magic methode call---------------------------------
+    // had logic kaml khso ikon f extend classes vediocourse or ola nkhdem b call magic methode
     public function addCourse($title, $content, $meta_description, $category_id) {
             $sql = "INSERT INTO courses (title, content, meta_description, category_id)
                     VALUES (:title, :content, :meta_description, :category_id)";
@@ -25,7 +28,7 @@ class Course extends Model {
                 ':category_id' => $category_id,
                 ':content' => $content
             ]);
-            return $this->pdo->lastInsertId(); // Returns the last inserted course ID
+            return $this->pdo->lastInsertId();
         }
         
         public function addCourseTag($course_id, $tag_id) {

@@ -1,4 +1,37 @@
+<?php
+require_once '../../vendor/autoload.php';
+use Config\Database; 
+use Models\Course; 
+use Models\Tag; 
+use Models\Category; 
 
+// Get the connection instance
+$pdo = Database::makeConnection();  // Ensure the connection is successful
+
+try {
+    // Create an instance of Category model
+    $courseModel = new course($pdo);
+    $tagModel = new Tag($pdo);
+    $categoryModel = new Category($pdo);
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+
+// Fetch all categories
+$getAllCourses = $courseModel->getAllCourses();
+$getAllTagsName =$tagModel->getAllTagsName();
+$AllCategoriesName =$categoryModel->getAllCategoriesName();
+// If there's a delete request, process it
+if (isset($_GET['delete_id'])) {
+    $deleteId = $_GET['delete_id'];
+    if ($courseModel->deleteCourse($deleteId)) {
+        header('Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/courses/manageCourses.php');
+        exit();
+    } else {
+        echo "Failed to delete the course.";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -54,43 +87,43 @@
         </tr>
       </thead>
       <tbody id="courseTableBody">
-        <!-- Static rows -->
-        <tr>
-          <td>1</td>
-          <td>HTML & CSS Basics</td>
-          <td>Learn the fundamentals of building web pages.</td>
-          <td>Web Development</td>
-          <td>HTML, CSS</td>
-          <td>
-            <button class="btn btn-danger btn-sm" onclick="deleteRow(this)">
-              Delete
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Python for Data Science</td>
-          <td>Master Python programming for data analysis.</td>
-          <td>Data Science</td>
-          <td>Python, Data</td>
-          <td>
-            <button class="btn btn-danger btn-sm" onclick="deleteRow(this)">
-              Delete
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>UI/UX Design Principles</td>
-          <td>Understand the basics of user-friendly design.</td>
-          <td>UI/UX Design</td>
-          <td>Design, UX</td>
-          <td>
-            <button class="btn btn-danger btn-sm" onclick="deleteRow(this)">
-              Delete
-            </button>
-          </td>
-        </tr>
+      <?php foreach($getAllCourses as $course): ?>
+    <tr>
+        <td><?php echo $course['id'] ?></td>
+        <td><?php echo $course['title'] ?></td>
+        <td><?php echo $course['meta_description'] ?></td>
+        
+    
+        <td>
+            <?php 
+                $categoryName = ''; 
+               
+                foreach ($AllCategoriesName as $category) {
+                
+                    if ($category['id'] == $course['category_id']) {
+                        $categoryName = $category['categoryname']; 
+                        break; 
+                    }
+                }
+                echo $categoryName; 
+            ?>
+        </td>
+
+      
+        <?php foreach($getAllTagsName as $tag): ?>
+            <td><?php echo $tag['tags'] ?></td>
+        <?php endforeach; ?>
+        
+
+        <td>
+        <button class="btn btn-sm btn-danger"><a href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/courses/manageCourses.php?delete_id=<?php echo $course['id']; ?>" onclick="return confirm('Are you sure you want to delete this course?')">Delete</a></button>
+        </td>
+    </tr>
+
+    
+<?php endforeach; ?>
+
+
       </tbody>
     </table>
   </div>

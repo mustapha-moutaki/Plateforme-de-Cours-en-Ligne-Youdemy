@@ -56,6 +56,16 @@ use PDO;
             return $stmt->fetch(PDO::FETCH_ASSOC);
         }
 
+
+
+        public function getAllCategoriesName() {
+            $query = "SELECT categories.name as categoryname, categories.id 
+                      FROM categories 
+                      JOIN courses ON courses.category_id = categories.id";
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
     }
 
 ?>
