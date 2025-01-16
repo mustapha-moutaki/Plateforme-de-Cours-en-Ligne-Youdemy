@@ -97,14 +97,14 @@ try {
             <div class="card-body px-4 pb-2">
              
 
-                <div class="course-container" style="width: 90%; margin: 0 auto;">
-    <?php if($course['video_content'] == null): ?>
-             <p>content :</p>
-             <p class="border-1 border-primary p-3"><?php echo $course['document_content']; ?></p>
-    <?php elseif($course['document_content'] == null): ?>
-        <iframe src="<?php echo $course['video_content'];?>" frameborder="0"></iframe>
-    <?php endif; ?>
-</div>
+            <div class="course-container" style="width: 90%; margin: 0 auto;">
+            <?php if($course['video_content'] == null): ?>
+                    <p>content :</p>
+                    <p class="border-1 border-primary p-3"><?php echo $course['document_content']; ?></p>
+            <?php elseif($course['document_content'] == null): ?>
+                <iframe src="<?php echo $course['video_content'];?>" frameborder="0"></iframe>
+            <?php endif; ?>
+        </div>
 
 <style>
     .course-container {

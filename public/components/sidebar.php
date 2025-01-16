@@ -1,5 +1,7 @@
 <?php
-
+require_once '../vendor/autoload.php';
+use Config\Database;
+use Models\User;
 if (isset($_SESSION['user_id']) ?? 'User') {
   $db = Database::makeConnection(); 
   $userModel = new User($db);

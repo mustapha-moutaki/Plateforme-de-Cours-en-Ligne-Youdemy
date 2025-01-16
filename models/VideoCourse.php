@@ -48,4 +48,12 @@ class VideoCourse extends Course {
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    public function updateCourseStatus($courseId, $status) {
+        $sql = "UPDATE courses SET status = :status WHERE id = :course_id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':course_id', $courseId);
+        $stmt->bindParam(':status', $status);
+        return $stmt->execute();
+    }
 }

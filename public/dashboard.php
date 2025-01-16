@@ -22,14 +22,14 @@ if (isset($_SESSION['username']) && isset($_SESSION['user_id'])) {
 //---------------------------
 // <?php if (isset($user['role']) && $user['role'] == 'admin'):?-->
 //------------------------
-// $userRole = User::getUserRole($user_id);
-// if($userRole === 'admin'){
-//     echo"------------------------------------------im admin";
-// }elseif($userRole === 'student'){
-//     echo"------------------------------------------im a student";
-// }else{
-//     echo"------------------------------------------ none";
-// }
+$userRole = User::getUserRole($user_id);
+if($userRole === 'admin'){
+    echo"------------------------------------------im admin";
+}elseif($userRole === 'student'){
+    echo"------------------------------------------im a student";
+}else{
+    echo"------------------------------------------ none";
+}
 
 // Create an instance of the Category model
 $categoryModel = new Category($pdo);
