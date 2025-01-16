@@ -3,6 +3,7 @@ require_once '../../vendor/autoload.php';
 
 use Config\Database; 
 use Models\DocumentCourse; 
+use Models\Category; 
 
 $pdo = Database::makeConnection();
 
@@ -94,19 +95,12 @@ try {
             </div>
 
             <div class="card-body px-4 pb-2">
-              <div class="tags">
-                <strong>Tags:</strong> <!--?php echo implode(', ', $course['tags']); ?-->
-              </div>
-              <div class="categories mb-1">
-                <strong>Categories:</strong> <!--?php echo implode(', ', $course['categories']); ?-->
-              </div>
+             
 
                 <div class="course-container" style="width: 90%; margin: 0 auto;">
     <?php if($course['video_content'] == null): ?>
-        <img src="https://i.pinimg.com/736x/1b/7b/e2/1b7be209fee3fd17943a981b5508384e.jpg" 
-             alt="Course Image" 
-             class="w-full h-48 object-cover">
-        <p><?php echo $course['document_content']; ?></p>
+             <p>content :</p>
+             <p class="border-1 border-primary p-3"><?php echo $course['document_content']; ?></p>
     <?php elseif($course['document_content'] == null): ?>
         <iframe src="<?php echo $course['video_content'];?>" frameborder="0"></iframe>
     <?php endif; ?>
@@ -114,13 +108,13 @@ try {
 
 <style>
     .course-container {
-        width: 90%; /* 90% of the full width of the page */
-        margin: 0 auto; /* Centers the div horizontally */
+        width: 90%; 
+        margin: 0 auto;
     }
 
     .course-container iframe {
-        width: 100%; /* Ensure the iframe takes full width */
-        height: 400px; /* You can adjust the height as needed */
+        width: 100%;
+        height: 400px;
     }
 </style>
 

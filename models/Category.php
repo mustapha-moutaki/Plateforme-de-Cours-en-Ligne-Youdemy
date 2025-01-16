@@ -35,18 +35,7 @@ use PDO;
             return $this->count('categories');
         }
 
-        public static function get_category_stats() {
-           
-            $sql = "SELECT categories.name AS category_name, COUNT(articles.id) AS article_count
-                    FROM categories
-                    LEFT JOIN articles ON categories.id = articles.category_id
-                    GROUP BY categories.name";
-         
-            $stmt = Database::makeconnection()->prepare($sql);
-            $stmt->execute();
-    
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        }
+        
 
         public function getCategoryById($id) {
             $query = "SELECT * FROM {$this->table} WHERE id = :id";
