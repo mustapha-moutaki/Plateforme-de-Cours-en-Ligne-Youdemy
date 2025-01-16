@@ -58,4 +58,16 @@ class DocumentCourse extends Course {
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    
+    public function updateCourseStatus($courseId, $status) {
+        $sql = "UPDATE courses SET status = :status WHERE id = :course_id";
+        $stmt = $this->pdo->prepare($sql);
+    
+        $stmt->bindParam(':status', $status);
+        $stmt->bindParam(':course_id', $courseId);
+    
+        return $stmt->execute();
+    }
+    
 }

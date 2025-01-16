@@ -2,6 +2,8 @@
 require_once '../../vendor/autoload.php';
 use Config\Database; 
 use Models\Course; 
+use Models\VideoCourse; 
+use Models\DocumentCourse; 
 use Models\Tag; 
 use Models\Category; 
 
@@ -10,7 +12,7 @@ $pdo = Database::makeConnection();  // Ensure the connection is successful
 
 try {
     // Create an instance of Category model
-    $courseModel = new course($pdo);
+    $courseModel = new videocourse($pdo);
     $tagModel = new Tag($pdo);
     $categoryModel = new Category($pdo);
 } catch (Exception $e) {

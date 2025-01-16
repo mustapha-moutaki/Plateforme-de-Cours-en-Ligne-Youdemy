@@ -5,6 +5,7 @@ use Config\Database;
 use Models\Tag;
 use Models\Category;
 use Models\Course;
+use Models\DocumentCourse;
 use Models\Teacher;
 $pdo = new database();
 // $conn = $pdo ->makeconnection();
@@ -12,7 +13,7 @@ $pdo = new database();
 $categoryModel = new Category($pdo);
 $tagModel = new Tag($pdo);
 // $userModel = new user($pdo);
-$courseModel = new Course($pdo);
+$courseModel = new DocumentCourse($pdo);
 $teacherModel = new Teacher($pdo);
 
 // Get the counts of categories and tags
@@ -24,7 +25,7 @@ $courseCount = $courseModel->countCourses();
 try {
     $CategoryModel = new Category($pdo);
     $tagModel = new Tag($pdo);
-    $courseModel = new Course($pdo);
+    $courseModel = new DocumentCourse($pdo);
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
 }
@@ -149,14 +150,23 @@ $courses = $courseModel->getCourses($page, $limit);
             ?>"
                 data-tag="<?php echo strtolower($course['tag_name']); ?>"
             >
+                <?php if($course['video_content'] == null): ?>
                 <img src="https://i.pinimg.com/736x/1b/7b/e2/1b7be209fee3fd17943a981b5508384e.jpg" 
                      alt="Course Image" 
                      class="w-full h-48 object-cover">
+                     <p><?php echo $course['document_content']; ?></p>
+                     <?php elseif($course['document_content'] == null): ?>
+                        <iframe src="<?php echo $course['video_content'];?>" frameborder="0"></iframe>
+                        <?php endif; ?>
                 <div class="p-6">
                     <h3 class="text-2xl font-semibold text-indigo-800"><?php echo $course['title']; ?></h3>
                     <p class="text-gray-600 mt-2"><?php echo $course['meta_description']; ?></p>
                     <div class="mt-4 flex justify-between items-center">
-                        <button class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700">Learn More</button>
+                        <!-- <button class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700">Learn More</button> -->
+                      <a href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/Student/viewcourse.php?course_id=<?php echo $course['id']; ?>" class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition duration-300 ease-in-out">
+                        Learn More
+                        </a>
+
                     </div>
                 </div>
             </div>

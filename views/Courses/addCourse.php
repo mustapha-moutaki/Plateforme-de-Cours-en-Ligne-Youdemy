@@ -1,5 +1,7 @@
 <?php
 require_once '../../vendor/autoload.php';
+require_once '../../public/Helpers/utils.php';
+
 use Config\Database;
 use Models\Admin;
 use Models\Category;
@@ -29,11 +31,12 @@ if (isset($_POST['add_course'])) {
 
         if ($content_type === 'video') {
             $courseModel = new VideoCourse($pdo);
-
-            $content = $_POST['video_url'];
+            echo "Video URL: " . $_POST['video_url']; 
+            // using convertto embed url methode to display video in front page
+            $content = convertToEmbedUrl($_POST['video_url']);
         } elseif ($content_type === 'document') {
             $courseModel = new DocumentCourse($pdo);
-            $content = $_POST['document']; 
+            $content = convertToEmbedUrl($_POST['document']); 
         } else {
             throw new Exception("Invalid content type selected.");
         }
@@ -44,6 +47,7 @@ if (isset($_POST['add_course'])) {
         // Handle tags if provided
         if (!empty($tags)) {
             foreach ($tags as $tag_id) {
+                echo "Adding tag: " . $tag_id . "<br>";
                 $courseModel->addCourseTag($course_id, $tag_id);
             }
         }
@@ -58,7 +62,7 @@ if (isset($_POST['add_course'])) {
     }
 
 
-    var_dump($content);
+    var_dump($tags);
 }
 ?>
 

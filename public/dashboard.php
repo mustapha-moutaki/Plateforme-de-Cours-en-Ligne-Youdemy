@@ -5,6 +5,8 @@ use Config\Database;
 use Models\Tag;
 use Models\Category;
 use Models\Course;
+use Models\VideoCourse;
+use Models\DocumentCourse;
 use Models\Teacher;
 use Models\User;
 $pdo = new database();
@@ -20,20 +22,20 @@ if (isset($_SESSION['username']) && isset($_SESSION['user_id'])) {
 //---------------------------
 // <?php if (isset($user['role']) && $user['role'] == 'admin'):?-->
 //------------------------
-$userRole = User::getUserRole($user_id);
-if($userRole === 'admin'){
-    echo"------------------------------------------im admin";
-}elseif($userRole === 'student'){
-    echo"------------------------------------------im a student";
-}else{
-    echo"------------------------------------------ none";
-}
+// $userRole = User::getUserRole($user_id);
+// if($userRole === 'admin'){
+//     echo"------------------------------------------im admin";
+// }elseif($userRole === 'student'){
+//     echo"------------------------------------------im a student";
+// }else{
+//     echo"------------------------------------------ none";
+// }
 
 // Create an instance of the Category model
 $categoryModel = new Category($pdo);
 $tagModel = new Tag($pdo);
 // $userModel = new user($pdo);
-$courseModel = new Course($pdo);
+$courseModel = new VideoCourse($pdo);
 $teacherModel = new Teacher($pdo);
 
 

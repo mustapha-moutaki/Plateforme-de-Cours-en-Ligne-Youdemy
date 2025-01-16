@@ -1,4 +1,5 @@
 <?php
+
 if (isset($_SESSION['user_id']) ?? 'User') {
   $db = Database::makeConnection(); 
   $userModel = new User($db);
@@ -63,7 +64,7 @@ if (isset($_SESSION['user_id']) ?? 'User') {
         </li>
         
         <li class="nav-item">
-          <a class="nav-link text-dark" href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/teacher/manageTeachers.php">
+          <a class="nav-link text-dark" href="/Plateforme-de-Cours-en-Ligne-Youdemy/views/Student/mycourses.php">
             <i class="material-symbols-rounded opacity-5">table_view</i>
             <span class="nav-link-text ms-1">My Courses</span>
           </a>

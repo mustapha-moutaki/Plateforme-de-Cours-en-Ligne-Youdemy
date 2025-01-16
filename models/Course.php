@@ -32,6 +32,10 @@ abstract class Course extends Model {
 
     // Method to fetch a course by its ID
    abstract public function getCourseById($id);
+
+   
+  abstract public function updateCourseStatus($courseId, $status);
+
 }
 
 

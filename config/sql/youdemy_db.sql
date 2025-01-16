@@ -34,6 +34,8 @@ CREATE TABLE IF NOT EXISTS courses (
     title VARCHAR(200),
     teacher_id INT,
     meta_description TEXT,
+    video_content VARCHAR(255),
+    document_content VARCHAR(255);
     content ENUM('video', 'document'),
     category_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -68,3 +70,6 @@ CREATE TABLE IF NOT EXISTS course_reviews (
 CREATE INDEX idx_course_title ON courses(title);
 CREATE INDEX idx_tag_name ON tags(name);
 CREATE INDEX idx_category_name ON categories(name);
+
+ALTER TABLE courses 
+ADD COLUMN status ENUM('completed', 'incompleted') DEFAULT 'incompleted';
