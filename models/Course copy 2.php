@@ -4,20 +4,47 @@ namespace Models;
 use Models\Model;
 use PDO;
 //i have to chage class course to abstract course and n3iyt 3la tous lesmethodes createcourse  <<hna>>
-abstract class Course extends Model {
+class Course extends Model {
     protected $table = 'courses';
 //<<han>>
     public function __construct($pdo) {
         $this->pdo = $pdo;
     }
 
-    abstract public function addCourse($title, $content, $meta_description, $category_id);
+    // Method to create a new course
+   // In Course Model (Models/Course.php)
+
+
+   //we can use magic methode call---------------------------------
+    // had logic kaml khso ikon f extend classes vediocourse or ola nkhdem b call magic methode
+    public function addCourse($title, $content, $meta_description, $category_id) {
+            $sql = "INSERT INTO courses (title, content, meta_description, category_id)
+                    VALUES (:title, :content, :meta_description, :category_id)";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([
+                ':title' => $title,
+                ':content' => $content,
+                ':meta_description' => $meta_description,
+                ':category_id' => $category_id,
+                ':content' => $content
+            ]);
+            return $this->pdo->lastInsertId();
+        }
         
-      abstract  public function addCourseTag($course_id, $tag_id);
+        public function addCourseTag($course_id, $tag_id) {
+            $sql = "INSERT INTO course_tag (course_id, tag_id) VALUES (:course_id, :tag_id)";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([
+                ':course_id' => $course_id,
+                ':tag_id' => $tag_id
+            ]);
+        }
 
 
     // Method to fetch all courses
-   abstract  public function getAllCourses();
+    public function getAllCourses() {
+        return $this->select($this->table);
+    }
 
     // Method to update course details
     public function updateCourse($id, $title, $description, $category) {
@@ -61,20 +88,6 @@ class VideoCourse extends Course {
         ]);
         return $this->pdo->lastInsertId();
     }
-
-
-    public function addCourseTag($course_id, $tag_id) {
-        $sql = "INSERT INTO course_tag (course_id, tag_id) VALUES (:course_id, :tag_id)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            ':course_id' => $course_id,
-            ':tag_id' => $tag_id
-        ]);
-    }
-
-    public function getAllCourses() {
-        return $this->select($this->table);
-    }
 }
 
 
@@ -93,19 +106,19 @@ class DocumentCourse extends Course {
         return $this->pdo->lastInsertId();
     }
 
-    public function addCourseTag($course_id, $tag_id) {
-        $sql = "INSERT INTO course_tag (course_id, tag_id) VALUES (:course_id, :tag_id)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            ':course_id' => $course_id,
-            ':tag_id' => $tag_id
-        ]);
-    }
 
-    public function getAllCourses() {
-        return $this->select($this->table);
-    }
-    
+
+
+
+
+
+
+
+
+
+
+
+
     public function getCourses($page, $limit) {
         $offset = ($page - 1) * $limit;
         $sql = "SELECT * FROM courses LIMIT :limit OFFSET :offset";

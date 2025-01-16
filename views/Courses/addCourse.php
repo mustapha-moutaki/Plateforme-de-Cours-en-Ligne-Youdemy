@@ -5,6 +5,8 @@ use Models\Admin;
 use Models\Category;
 use Models\Tag;
 use Models\Course;
+use Models\VideoCourse;
+use Models\DocumentCourse;
 
 $pdo = Database::makeConnection();
 
@@ -15,48 +17,31 @@ $tagModel = new Tag($pdo);
 $tags = $tagModel->getAllTags();
 
 if (isset($_POST['add_course'])) {
-    // Get form values
-    echo"------------------------------------------------added-------------------------added";
-    $title = $_POST['title'];
-    $content = $_POST['content'];
-    $meta_description = $_POST['meta_description'];
-    $category_id = $_POST['category'];
-    $tags = $_POST['tags'] ?? [];
-    $content_type = $_POST['content_type'];
-
-    // Initialize course model and create course
-    $courseModel = new Course($pdo);
-    
     try {
         $pdo->beginTransaction();
 
-        
+        $title = $_POST['title'];
         $content = '';
-        if ($content_type === 'video') {
-            $content = $_POST['video_url']; 
-        } elseif ($content_type === 'document') {
-            // Handle document upload
-            if (isset($_FILES['document_file']) && $_FILES['document_file']['error'] === UPLOAD_ERR_OK) {
-                $fileTmpPath = $_FILES['document_file']['tmp_name'];
-                $fileName = $_FILES['document_file']['name'];
-                $fileDestPath = '../../uploads/' . $fileName;
+        $meta_description = $_POST['meta_description'];
+        $category_id = $_POST['category'];
+        $tags = $_POST['tags'] ?? [];
+        $content_type = $_POST['content_type'];
 
-                if (move_uploaded_file($fileTmpPath, $fileDestPath)) {
-                    $content = $fileName;
-                    header('Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/courses/addCourse.php');
-                    echo"file added successfully ----------------------------------------";
-                } else {
-                    throw new Exception("Failed to upload document.");
-                }
-            } else {
-                throw new Exception("No document uploaded or error occurred.");
-            }
+        if ($content_type === 'video') {
+            $courseModel = new VideoCourse($pdo);
+
+            $content = $_POST['video_url'];
+        } elseif ($content_type === 'document') {
+            $courseModel = new DocumentCourse($pdo);
+            $content = $_POST['document']; 
+        } else {
+            throw new Exception("Invalid content type selected.");
         }
 
-        // Insert course data into database
+        // Insert course into the database
         $course_id = $courseModel->addCourse($title, $content, $meta_description, $category_id);
 
-        // Add tags (if any) associated with the course
+        // Handle tags if provided
         if (!empty($tags)) {
             foreach ($tags as $tag_id) {
                 $courseModel->addCourseTag($course_id, $tag_id);
@@ -71,6 +56,8 @@ if (isset($_POST['add_course'])) {
         $pdo->rollBack();
         echo "Error: " . $e->getMessage();
     }
+
+
     var_dump($content);
 }
 ?>
@@ -152,14 +139,16 @@ if (isset($_POST['add_course'])) {
 
                                 <!-- Media URL or Document File -->
                                 <div class="mb-3">
-                                    <select name="content_type" id="">
-                                        <option value="" name="video">video</option>
-                                        <option value="" name="document">document</option>
-                                    </select>
+                                <label for="content_type" class="form-label fw-semibold">Content Type</label>
+                                <select name="content_type" id="contentType" class="form-select" required>
+                                    <option value="video">Video</option>
+                                    <option value="document">Document</option>
+                                </select>
+                            </div>
 
                                     <label for="mediaInput" class="form-label fw-semibold">Course Content (Video URL or Document File)</label>
                                     <input type="url" class="form-control" id="mediaUrl" placeholder="Enter video URL (YouTube, Vimeo, etc.)" name="video_url">
-                                    <input type="file" class="form-control mt-3" id="mediaFile" name="document_file" accept=".pdf,.doc,.docx">
+                                    <textarea class="form-control" id="exampleTextarea" rows="5" placeholder="Enter your text here..." name="document"></textarea>
                                 </div>
 
                                 <div class="mb-3">
