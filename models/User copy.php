@@ -94,12 +94,6 @@ class User extends AbstractUser {
         return $user ? $user : null;
     }
 
-    public function getUserById($id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE id = :id");
-        $stmt->bindParam(':id', $id);
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
+    
     
 }

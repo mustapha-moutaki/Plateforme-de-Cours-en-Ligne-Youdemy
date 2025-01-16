@@ -10,45 +10,28 @@ $db = Database::makeconnection();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        die("error of checking csrf code!");
+        die("error of checking CSRF!");
     }
 
     $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
-    $password = $_POST['password']; 
+    $password = trim($_POST['password']); 
 
     try {
         $user = new User($db);
-        $userData = $user->findByEmail($email);
+        $userData = $user->login($email, $password);
+        $_SESSION['user_id'] = $userData['id']; 
+        $_SESSION['email'] = $userData['email'];
 
-        if ($userData && password_verify($password, $userData['password'])) {
-            $_SESSION['user_id'] = $userData['id']; 
-            $_SESSION['email'] = $userData['email'];
-
-                if($email ==='mustaphastar06@gmail.com' && $password=123123){
-                    header('Location:../../admin/index.php');
-                    exit;
-                }else{
-                    header('Location:../../admin/index.php');
-                }
-
-
-
-        }else{
-            echo"incorrect infos, please try again";
-        }
-        //     echo "login with success";
-
-        //     header('Location:../../admin/index.php');
-        //     exit;
-        // } else {
-        //     echo "incorrect infos, please try again";
-        // }
-
+        header('Location:/Plateforme-de-Cours-en-Ligne-Youdemy/public/dashboard.php');
+        exit;
     } catch (\Exception $e) {
         echo "error: " . $e->getMessage();
     }
+    var_dump($email, $password);
+exit;
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -106,18 +89,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
                 </div>
               </div>
               <div class="card-body">
-                <form role="form" class="text-start">
+                <form class="text-start" method="POST">
+                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                   <div class="input-group input-group-outline my-3">
                     <label class="form-label">Email</label>
-                    <input type="email" class="form-control">
+                    <input type="email" class="form-control" name="email">
                   </div>
                   <div class="input-group input-group-outline mb-3">
                     <label class="form-label">Password</label>
-                    <input type="password" class="form-control">
+                    <input type="password" class="form-control" name="password">
                   </div>
                
                   <div class="text-center">
-                    <button type="button" class="btn bg-gradient-dark w-100 my-4 mb-2">log in</button>
+                    <button type="submit" class="btn bg-gradient-dark w-100 my-4 mb-2" name="login">log in</button>
                   </div>
                   <p class="mt-4 text-sm text-center">
                     Don't have an account?

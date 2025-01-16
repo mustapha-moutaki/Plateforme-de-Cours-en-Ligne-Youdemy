@@ -1,4 +1,13 @@
 <?php
+if (isset($_SESSION['user_id']) ?? 'User') {
+  $db = Database::makeConnection(); 
+  $userModel = new User($db);
+
+  $userId = $_SESSION['user_id'];  
+
+  $user = $userModel->getUserById($userId);
+}
+
 
 ?>
 
@@ -43,11 +52,20 @@
           </a>
         </li>
 
-
+        <?php if (isset($user['role']) && $user['role'] == 'teacher'): ?>
+          <p>hellojfhsjfljs</p>
+            <?php endif; ?>
         <li class="nav-item">
           <a class="nav-link text-dark" href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/teacher/manageTeachers.php">
             <i class="material-symbols-rounded opacity-5">table_view</i>
             <span class="nav-link-text ms-1">Manage Teachers</span>
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link text-dark" href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/teacher/manageTeachers.php">
+            <i class="material-symbols-rounded opacity-5">table_view</i>
+            <span class="nav-link-text ms-1">My Courses</span>
           </a>
         </li>
         <li class="nav-item">
@@ -91,26 +109,18 @@
             <span class="nav-link-text ms-1">Profile</span>
           </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link text-dark" href="../pages/sign-in.html">
-            <i class="material-symbols-rounded opacity-5">login</i>
-            <span class="nav-link-text ms-1">Sign In</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link text-dark" href="../pages/sign-up.html">
-            <i class="material-symbols-rounded opacity-5">assignment</i>
-            <span class="nav-link-text ms-1">Sign Up</span>
-          </a>
-        </li>
+       
+       
       </ul>
     </div>
     <div class="sidenav-footer position-absolute w-100 bottom-0 ">
-      <div class="mx-3">
-        <a class="btn btn-outline-dark mt-4 w-100" href="https://www.creative-tim.com/learning-lab/bootstrap/overview/material-dashboard?ref=sidebarfree" type="button">Documentation</a>
-        <a class="btn bg-gradient-dark w-100" href="https://www.creative-tim.com/product/material-dashboard-pro?ref=sidebarfree" type="button">Upgrade to pro</a>
-      </div>
+    
+      <a class="btn bg-gradient-dark w-100 nav-link text-dark" href="/Plateforme-de-Cours-en-Ligne-Youdemy\public\logout.php">
+            <i class="material-symbols-rounded opacity-5 text-light">logout</i>
+            <span class="nav-link-text ms-1 text-white">logout</span>
+          </a>
     </div>
+
   </aside>
 </body>
 </html>

@@ -6,11 +6,28 @@ use Models\Tag;
 use Models\Category;
 use Models\Course;
 use Models\Teacher;
+use Models\User;
 $pdo = new database();
 $conn = $pdo ->makeconnection();
 
+session_start();
 
-
+if (isset($_SESSION['username']) && isset($_SESSION['user_id'])) {
+    $username = $_SESSION['username'];
+    $user_id = $_SESSION['user_id'];
+    
+}
+//---------------------------
+// <?php if (isset($user['role']) && $user['role'] == 'admin'):?-->
+//------------------------
+$userRole = User::getUserRole($user_id);
+if($userRole === 'admin'){
+    echo"------------------------------------------im admin";
+}elseif($userRole === 'student'){
+    echo"------------------------------------------im a student";
+}else{
+    echo"------------------------------------------ none";
+}
 
 // Create an instance of the Category model
 $categoryModel = new Category($pdo);
@@ -91,7 +108,7 @@ include_once './components/sidebar.php';
                 </div>
               </div>
             </div>
-            
+
             <hr class="horizontal my-0 bg-primary">
             <div class="card-footer p-3">
              

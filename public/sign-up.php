@@ -174,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup'])) {
         <label class="form-check-label" for="teacher">Teacher</label>
     </div>
     <div class="form-check">
-        <input class="form-check-input" type="radio" id="student" name="user_type" value="student">
+        <input class="form-check-input" type="radio" id="student" name="user_type" value="student" required>
         <label class="form-check-label" for="student">Student</label>
     </div>
 </div>
