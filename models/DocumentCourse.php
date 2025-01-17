@@ -2,15 +2,22 @@
 namespace Models;
 use PDO;
 class DocumentCourse extends Course {
-    public function addCourse($title, $content, $meta_description, $category_id) {
-        $sql = "INSERT INTO courses (title, document_content, meta_description, category_id)
-                VALUES (:title, :document_path, :meta_description, :category_id)";
+    public function __construct() {
+       
+            $this->pdo = new PDO('mysql:host=localhost;dbname=youdemy_db', 'root', '');
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    }
+    
+    public function addCourse($title, $content, $meta_description, $category_id, $teacher_id) {
+        $sql = "INSERT INTO courses (title, document_content, meta_description, category_id, teacher_id)
+                VALUES (:title, :document_path, :meta_description, :category_id, :teacher_id)";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
             ':title' => $title,
             ':document_path' => $content,
             ':meta_description' => $meta_description,
             ':category_id' => $category_id,
+            ':teacher_id' => $teacher_id,
         ]);
         return $this->pdo->lastInsertId();
     }
@@ -59,6 +66,13 @@ class DocumentCourse extends Course {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getCoursesByUserId($userId) {
+        $query = "SELECT * FROM {$this->table} WHERE teacher_id = :userId";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     
     public function updateCourseStatus($courseId, $status) {
         $sql = "UPDATE courses SET status = :status WHERE id = :course_id";
@@ -68,6 +82,20 @@ class DocumentCourse extends Course {
         $stmt->bindParam(':course_id', $courseId);
     
         return $stmt->execute();
+    }
+
+
+    public function getCoursesByPage($page, $limit) {
+        $offset = ($page - 1) * $limit;
+        $stmt = $this->pdo->prepare("SELECT * FROM courses LIMIT :limit OFFSET :offset");
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function countCourses() {
+        return $this->count('courses');
     }
     
 }

@@ -2,15 +2,16 @@
 namespace Models;
 use PDO;
 class VideoCourse extends Course {
-    public function addCourse($title, $content, $meta_description, $category_id) {
-        $sql = "INSERT INTO courses (title, video_content, meta_description, category_id)
-                VALUES (:title, :video_url, :meta_description, :category_id)";
+    public function addCourse($title, $content, $meta_description, $category_id, $teacher_id) {
+        $sql = "INSERT INTO courses (title, video_content, meta_description, category_id, teacher_id)
+                VALUES (:title, :video_url, :meta_description, :category_id, :teacher_id)";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
             ':title' => $title,
             ':video_url' => $content,
             ':meta_description' => $meta_description,
             ':category_id' => $category_id,
+            ':teacher_id' => $teacher_id,
         ]);
         return $this->pdo->lastInsertId();
     }
@@ -41,6 +42,14 @@ class VideoCourse extends Course {
         return $this->delete($this->table, 'id', $id);
     }
 
+    public function getCoursesByUserId($userId) {
+        $query = "SELECT * FROM {$this->table} WHERE teacher_id = :userId";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getCourseById($id) {
         $query = "SELECT * FROM {$this->table} WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
@@ -56,4 +65,24 @@ class VideoCourse extends Course {
         $stmt->bindParam(':status', $status);
         return $stmt->execute();
     }
+
+    public function getCoursesByPage($page, $limit) {
+        $offset = ($page - 1) * $limit;
+        $stmt = $this->pdo->prepare("SELECT * FROM courses LIMIT :limit OFFSET :offset");
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countCourses() {
+        return $this->count('courses');
+    }
+    
+    // public function getTotalCourses() {
+    //     $db = \Config\Database::connect(); // Charge la connexion configurée
+    //     $query = $db->query("SELECT COUNT(*) as total FROM courses");
+    //     $result = $query->getRowArray();
+    //     return $result['total'];
+    // }
 }

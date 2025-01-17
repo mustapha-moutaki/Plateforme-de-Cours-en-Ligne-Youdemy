@@ -34,26 +34,33 @@ try {
 $getAllCategories = $CategoryModel->getAllCategories();
 $getAllTags = $tagModel->getAllTags();
 $getAllCourses = $courseModel->getAllCourses();
-
-// Get the total number of courses
-/*
-$totalCourses = count($courseModel->getAllCourses());
-
+$totalCourses = $courseModel->getAllCourses();
 
 // Set the number of courses per page
+// $limit = 5;
+
+// $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+
+// // Calculate the total number of pages
+// $totalPages = ceil($courseCount / $limit);
+
+// // Fetch the courses for the current page
+// $courses = $courseModel->getCoursesByPage($page, $limit);
+
+
 $limit = 6;
 
-// Get the current page from the query parameter or default to 1
+// الصفحة الحالية
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
-// Calculate the total number of pages
-$totalPages = ceil($totalCourses / $limit);
+// عدد الدورات الإجمالي
+$courseCount = $courseModel->countCourses();
 
-// Get the paginated courses for the current page
-$courses = $courseModel->getCourses($page, $limit);
-*/
+// عدد الصفحات الكلي
+$totalPages = ceil($courseCount / $limit);
 
-// $AllCategoriesName = $categoryModel ->getAllCategoriesName();
+// استرجاع الدورات للصفحة الحالية
+$courses = $courseModel->getCoursesByPage($page, $limit);
 ?>
 
 <!DOCTYPE html>
@@ -77,7 +84,7 @@ $courses = $courseModel->getCourses($page, $limit);
         </div>
         <!-- Navigation: Login and Sign-up -->
         <div class="space-x-6">
-            <a href="/Plateforme-de-Cours-en-Ligne-Youdemy/public/sign-up.php" class="text-white hover:underline text-lg">Login</a>
+            <a href="/Plateforme-de-Cours-en-Ligne-Youdemy/public/sign-in.php" class="text-white hover:underline text-lg">Login</a>
             <a href="/Plateforme-de-Cours-en-Ligne-Youdemy/public/sign-up.php" class="text-white hover:underline text-lg">Sign Up</a>
         </div>
     </header>
@@ -129,44 +136,28 @@ $courses = $courseModel->getCourses($page, $limit);
     </section>
 
     <!-- Featured Courses Section -->
-    <section class="p-8 bg-gray-100">
+<section class="p-8 bg-gray-100">
     <h2 class="text-3xl font-semibold text-center mb-6 text-indigo-800">Featured Courses</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="courseList">
-        <?php foreach ($getAllCourses as $course): ?>
-            <!-- Featured Course -->
-            <div 
-                class="course bg-white shadow-lg rounded-lg overflow-hidden hover:scale-105 transform transition duration-300"
-                data-category=" <?php 
-                $categoryName = ''; 
-               
-                foreach ($AllCategoriesName as $category) {
-                
-                    if ($category['id'] == $course['category_id']) {
-                        $categoryName = $category['categoryname']; 
-                        break; 
-                    }
-                }
-                echo $categoryName; 
-            ?>"
-                data-tag="<?php echo strtolower($course['tag_name']); ?>"
-            >
-                <?php if($course['video_content'] == null): ?>
-                <img src="https://i.pinimg.com/736x/1b/7b/e2/1b7be209fee3fd17943a981b5508384e.jpg" 
-                     alt="Course Image" 
-                     class="w-full h-48 object-cover">
-                     <p><?php echo $course['document_content']; ?></p>
-                     <?php elseif($course['document_content'] == null): ?>
-                        <iframe src="<?php echo $course['video_content'];?>" frameborder="0"></iframe>
-                        <?php endif; ?>
-                <div class="p-6">
-                    <h3 class="text-2xl font-semibold text-indigo-800"><?php echo $course['title']; ?></h3>
-                    <p class="text-gray-600 mt-2"><?php echo $course['meta_description']; ?></p>
-                    <div class="mt-4 flex justify-between items-center">
-                        <!-- <button class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700">Learn More</button> -->
-                      <a href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/Student/viewcourse.php?course_id=<?php echo $course['id']; ?>" class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition duration-300 ease-in-out">
-                        Learn More
-                        </a>
+        <?php foreach ($courses as $course): ?>
+            <div class="course bg-white shadow-lg rounded-lg overflow-hidden hover:scale-105 transform transition duration-300">
+                <!-- Add course image or video content dynamically -->
+                <?php if($course['video_content'] != null): ?>
+                    <!-- If video content exists -->
+                    <iframe src="<?= $course['video_content']; ?>" frameborder="0" class="w-full h-48 object-cover"></iframe>
+                <?php elseif($course['document_content'] != null): ?>
+                    <!-- If document content exists (fallback image and document) -->
+                    <img src="https://i.pinimg.com/736x/1b/7b/e2/1b7be209fee3fd17943a981b5508384e.jpg" 
+                         alt="Course Image" 
+                         class="w-full h-48 object-cover">
+                    <p class="mt-2"><?= $course['document_content']; ?></p>
+                <?php endif; ?>
 
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-indigo-800"><?= $course['title'] ?></h3>
+                    <p class="text-gray-600 mt-2"><?= $course['meta_description'] ?></p>
+                    <div class="mt-4 flex justify-between items-center">
+                        <a href="viewcourse.php?course_id=<?= $course['id'] ?>" class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition duration-300 ease-in-out">Learn More</a>
                     </div>
                 </div>
             </div>
@@ -176,28 +167,29 @@ $courses = $courseModel->getCourses($page, $limit);
 
 
 
+
+
+
+
 <div id="paginationControls" class="flex justify-center mt-6 space-x-4">
-    <?php
-    // Check if there is more than 1 page
-    if ($totalPages > 1) {
-        // Create the "Previous" link if not on the first page
-        if ($page > 1) {
-            echo '<a href="landing-page.php?page=' . ($page - 1) . '" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Previous</a>';
-        }
+    <?php if ($totalPages > 1): ?>
+        <!-- Previous Page Link -->
+        <?php if ($page > 1): ?>
+            <a href="?page=<?= $page - 1 ?>" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Previous</a>
+        <?php endif; ?>
 
-        // Generate page links dynamically
-        for ($i = 1; $i <= $totalPages; $i++) {
-            $activeClass = ($i === $page) ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600';
-            echo '<a href="landing-page.php?page=' . $i . '" class="' . $activeClass . ' px-4 py-2 rounded-md hover:bg-indigo-700 hover:text-white">' . $i . '</a>';
-        }
+        <!-- Page Numbers -->
+        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+            <a href="?page=<?= $i ?>" class="<?= $i == $page ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600' ?> px-4 py-2 rounded-md hover:bg-indigo-700 hover:text-white"><?= $i ?></a>
+        <?php endfor; ?>
 
-        // Create the "Next" link if not on the last page
-        if ($page < $totalPages) {
-            echo '<a href="landing-page.php?page=' . ($page + 1) . '" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Next</a>';
-        }
-    }
-    ?>
+        <!-- Next Page Link -->
+        <?php if ($page < $totalPages): ?>
+            <a href="?page=<?= $page + 1 ?>" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Next</a>
+        <?php endif; ?>
+    <?php endif; ?>
 </div>
+
 
 
 

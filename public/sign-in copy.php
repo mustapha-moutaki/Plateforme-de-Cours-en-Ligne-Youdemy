@@ -1,4 +1,37 @@
+<!--?php
+require_once '../vendor/autoload.php';
 
+use Config\Database;
+use Models\User;
+
+// session_start();
+  
+
+$db = Database::makeconnection();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
+    // if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+    //     die("error of checking CSRF!");
+    // }
+
+    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
+    $password = trim($_POST['password']); 
+
+    try {
+        $user = new User($db);
+        $userData = $user->login($email, $password);
+        $_SESSION['user_id'] = $userData['id']; 
+        $_SESSION['email'] = $userData['email'];
+
+        header('Location:/Plateforme-de-Cours-en-Ligne-Youdemy/public/dashboard.php');
+        exit;
+    } catch (\Exception $e) {
+        echo "error: " . $e->getMessage();
+    }
+    var_dump($email, $password);
+exit;
+}
+?-->
 <?php
 require_once '../vendor/autoload.php';
 
@@ -9,35 +42,40 @@ session_start();
 
 $db = Database::makeconnection();
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
-  $email = $_POST['email'];
-  $password = $_POST['password']; 
+    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
+    $password = $_POST['password']; 
 
-  try {
-      $user = new User($db);
-      $userData = $user->login($email, $password);
-      $_SESSION['username'] = $userData['username'];
+    try {
+        $user = new User($db);
+        $userData = $user->login($email, $password);
 
-      $_SESSION['user_id'] = $userData['id']; 
-      $_SESSION['email'] = $userData['email'];
+       
+        if ($userData) {
+           
+            if (($password == $userData['password_hash'])) {
+                $_SESSION['user_id'] = $userData['id']; 
+                $_SESSION['email'] = $userData['email'];
 
-      if ($userData['email'] === 'wassim@gmail.com') {
-        
-          header('Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/public/dashboard.php');
-          exit;
-          
-      } elseif ($userData['email']) {
-          header('Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/public/dashboard.php'); 
-          exit;
-      }else{
-        header('Location: test.php');
-      }
-  } catch (Exception) {
-     echo "Invalid email or password."; 
-  }
+                if ($email === 'wassim@gmail.com' && $password === '123123123qw') {
+                    // header('Location:../../admin/index.php');
+                    // exit;
+                    echo"hello bien1";
+                } else {
+                    // header('Location:../../admin/index.php');
+                    echo"hello bien 2";
+                }
+            } else {
+                echo "password incorrect";
+            }
+        } else {
+            
+            echo "email not found, please try again!";
+        }
+    } catch (\Exception $e) {
+        echo "error: " . $e->getMessage();
+    }
 }
-
 ?>
 
 
@@ -98,7 +136,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
                   </div>
                 </div>
               </div>
-             
+              <!-- <div class="card-body">
+                <form class="text-start" method="POST">
+                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                  <div class="input-group input-group-outline my-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" name="email">
+                  </div>
+                  <div class="input-group input-group-outline mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" name="password">
+                  </div>
+               
+                  <div class="text-center">
+                    <button type="submit" class="btn bg-gradient-dark w-100 my-4 mb-2" name="login">log in</button>
+                  </div>
+                  <p class="mt-4 text-sm text-center">
+                    Don't have an account?
+                    <a href="/Plateforme-de-Cours-en-Ligne-Youdemy/public/sign-up.php" class="text-primary text-gradient font-weight-bold">Sign up</a>
+                  </p>
+                </form>
+              </div> -->
+    
+
 
 <div class="card-body">
   <form class="text-start" action="" method="POST">

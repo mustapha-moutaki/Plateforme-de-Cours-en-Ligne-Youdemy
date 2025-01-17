@@ -1,5 +1,5 @@
 <?php
-require_once '../vendor/autoload.php';
+// include '../../vendor/autoload.php';
 use Config\Database;
 use Models\User;
 if (isset($_SESSION['user_id']) ?? 'User') {
@@ -40,7 +40,7 @@ if (isset($_SESSION['user_id']) ?? 'User') {
 <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2  bg-white my-2" id="sidenav-main">
     <div class="sidenav-header">
       <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
-      <a class="navbar-brand px-4 py-3 m-0" href=" https://demos.creative-tim.com/material-dashboard/pages/dashboard " target="_blank">
+      <a class="navbar-brand px-4 py-3 m-0" href="/Plateforme-de-Cours-en-Ligne-Youdemy/public/dashboard.php" target="_blank">
         <!-- <img src="../assets/img/logos/" class="navbar-brand-img" width="26" height="26" alt="main_logo"> -->
         <span class="ms-1 text-sm text-dark"><strong>YOUDEMY</strong>courses</span>
       </a>
@@ -55,48 +55,80 @@ if (isset($_SESSION['user_id']) ?? 'User') {
           </a>
         </li>
 
-        <?php if (isset($user['role']) && $user['role'] == 'teacher'): ?>
-          <p>hellojfhsjfljs</p>
-            <?php endif; ?>
+        <?php if (isset($user['role']) && $user['role'] == 'admin'): ?>
         <li class="nav-item">
           <a class="nav-link text-dark" href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/teacher/manageTeachers.php">
             <i class="material-symbols-rounded opacity-5">table_view</i>
             <span class="nav-link-text ms-1">Manage Teachers</span>
           </a>
         </li>
-        
+        <?php endif; ?>
+
+        <?php if (isset($user['role']) && $user['role'] == 'admin'): ?>
         <li class="nav-item">
           <a class="nav-link text-dark" href="/Plateforme-de-Cours-en-Ligne-Youdemy/views/Student/mycourses.php">
             <i class="material-symbols-rounded opacity-5">table_view</i>
             <span class="nav-link-text ms-1">My Courses</span>
           </a>
         </li>
+        <?php endif; ?>
+
+        <?php if (isset($user['role']) && $user['role'] == 'admin'): ?>
         <li class="nav-item">
           <a class="nav-link text-dark" href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/student/manageStudents.php">
             <i class="material-symbols-rounded opacity-5">receipt_long</i>
             <span class="nav-link-text ms-1">Manage Students</span>
           </a>
         </li>
+        <?php endif; ?>
+
+        <?php if (isset($user['role'], $user['status']) && 
+          ($user['role'] == 'admin') && 
+          $user['status'] == 'active'): ?>
         <li class="nav-item">
           <a class="nav-link text-dark" href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/courses/manageCourses.php">
             <i class="material-symbols-rounded opacity-5">view_in_ar</i>
             <span class="nav-link-text ms-1">Manage courses</span>
           </a>
         </li>
+          <?php endif; ?>
+
+
+          
+        <?php if (isset($user['role'], $user['status']) && 
+          ($user['role'] == 'teacher') && 
+          $user['status'] == 'active'): ?>
+        <li class="nav-item">
+          <a class="nav-link text-dark" href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/Courses/manageCoursesTeacher.php">
+            <i class="material-symbols-rounded opacity-5">view_in_ar</i>
+            <span class="nav-link-text ms-1">Manage courses</span>
+          </a>
+        </li>
+          <?php endif; ?>
+
+
+
+          
+
+          <?php if (isset($user['role']) && $user['role'] == 'admin'): ?>
         <li class="nav-item">
         <a class="nav-link text-dark" href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/Categories/manageCategories.php">
         <i class="material-symbols-rounded opacity-5">school</i>
      <span>Manage Categories</span>
         </a>
-
         </li>
+           <?php endif; ?>
+
+           <?php if (isset($user['role']) && $user['role'] == 'admin'): ?>
+          
+         
         <li class="nav-item">
   <a class="nav-link text-dark" href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/tags/manageTags.php">
     <i class="material-symbols-rounded opacity-5">label</i>
     <span class="nav-link-text ms-1">Manage Tags</span>
   </a>
 </li>
-
+ <?php endif; ?>
         <li class="nav-item">
           <a class="nav-link text-dark" href="../pages/notifications.html">
             <i class="material-symbols-rounded opacity-5">notifications</i>

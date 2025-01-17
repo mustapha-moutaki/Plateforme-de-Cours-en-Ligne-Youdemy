@@ -1,4 +1,5 @@
 <?php
+$username = null;
 if (isset($_SESSION['username']) && isset($_SESSION['user_id'])) {
     $username = $_SESSION['username'];
     $user_id = $_SESSION['user_id'];
@@ -6,6 +7,10 @@ if (isset($_SESSION['username']) && isset($_SESSION['user_id'])) {
 }
 
 ?>
+
+
+
+
 
 
 <!DOCTYPE html>
@@ -65,8 +70,8 @@ if (isset($_SESSION['username']) && isset($_SESSION['user_id'])) {
         <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
             <div class="d-flex align-items-center">
             <p class="mb-0 me-2">
-    <?php if (isset($username) && $username): ?>
-        <?php echo "hello " . $username; ?>
+            <?php if (isset($username) && $username): ?>
+        <?php echo "hello " . htmlspecialchars($username); ?>
     <?php endif; ?>
 </p>
 

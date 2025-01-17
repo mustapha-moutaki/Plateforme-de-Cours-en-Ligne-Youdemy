@@ -8,10 +8,9 @@ use Models\Tag;
 use Models\Category; 
 
 // Get the connection instance
-$pdo = Database::makeConnection();  // Ensure the connection is successful
+$pdo = Database::makeConnection();
 
 try {
-    // Create an instance of Category model
     $courseModel = new videocourse($pdo);
     $tagModel = new Tag($pdo);
     $categoryModel = new Category($pdo);
@@ -26,16 +25,17 @@ $getAllTagsName =$tagModel->getAllTagsName();
 $AllCategoriesName =$categoryModel->getAllCategoriesName();
 //new additons
 // $getallcoursesofteacher = $courseModel ->getCourseById();
+session_start();
+$userId = $_SESSION['user_id'];
+$courseModel = new VideoCourse($pdo);
+$userCourses = $courseModel->getCoursesByUserId($userId);
 
 
-
-
- 
 // If there's a delete request, process it
 if (isset($_GET['delete_id'])) {
     $deleteId = $_GET['delete_id'];
     if ($courseModel->deleteCourse($deleteId)) {
-        header('Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/courses/manageCourses.php');
+        header('Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/courses/manageCoursesTeacher.php');
         exit();
     } else {
         echo "Failed to delete the course.";
@@ -84,7 +84,7 @@ if (isset($_GET['delete_id'])) {
     <div class="container my-5">
     <h2 class="mb-4">Manage Courses</h2>
    
-    <!-- <a href="addCourse.php"><button class="btn btn-primary mb-4">Add Course</button></a> -->
+    <a href="addCourse.php"><button class="btn btn-primary mb-4">Add Course</button></a>
   
     <!-- Courses Table -->
     <table class="table table-bordered table-hover">
@@ -99,12 +99,14 @@ if (isset($_GET['delete_id'])) {
         </tr>
       </thead>
       <tbody id="courseTableBody">
-      <?php foreach($getAllCourses as $course): ?>
+      <?php foreach($userCourses as $course): ?>
     <tr>
         <td><?php echo $course['id'] ?></td>
         <td><?php echo $course['title'] ?></td>
-        <td><?php echo $course['meta_description'] ?></td>    
-    <td>
+        <td><?php echo $course['meta_description'] ?></td>
+        
+    
+        <td>
             <?php 
                 $categoryName = ''; 
                
@@ -126,7 +128,9 @@ if (isset($_GET['delete_id'])) {
         
 
         <td>
-        <button class="btn btn-sm btn-danger"><a href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/courses/manageCourses.php?delete_id=<?php echo $course['id']; ?>" onclick="return confirm('Are you sure you want to delete this course?')">Delete</a></button>
+        <button class="btn btn-sm btn-danger"><a href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/Courses/manageCoursesTeacher.php?delete_id=<?php echo $course['id']; ?>" onclick="return confirm('Are you sure you want to delete this course?')">Delete</a></button>
+
+        <button class="btn btn-sm btn-danger"><a href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/Courses/EditCourse.php?edit_id=<?php echo $course['id']; ?>">edit</a></button>
         </td>
     </tr>
 

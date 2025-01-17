@@ -9,7 +9,7 @@ use Models\Tag;
 use Models\Course;
 use Models\VideoCourse;
 use Models\DocumentCourse;
-
+session_start();
 $pdo = Database::makeConnection();
 
 $categoryModel = new Category($pdo);
@@ -40,9 +40,11 @@ if (isset($_POST['add_course'])) {
         } else {
             throw new Exception("Invalid content type selected.");
         }
-
+        $teacher_id = $_SESSION['user_id']; 
         // Insert course into the database
-        $course_id = $courseModel->addCourse($title, $content, $meta_description, $category_id);
+        // $course_id = $courseModel->addCourse($title, $content, $meta_description, $category_id);
+        $course_id = $courseModel->addCourse($title, $content, $meta_description, $category_id, $teacher_id);
+        
 
         // Handle tags if provided
         if (!empty($tags)) {

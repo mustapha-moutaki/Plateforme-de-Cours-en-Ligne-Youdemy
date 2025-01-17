@@ -9,14 +9,14 @@ use Models\User;
 $pdo = Database::makeconnection();
 session_start();
 
-if (!isset($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
+// if (!isset($_SESSION['csrf_token'])) {
+//     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+// }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup'])) {
-    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        die("CSRF token validation failed!");
-    }
+    // if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+    //     die("CSRF token validation failed!");
+    // }
 
     // Sanitize input
     $username = htmlspecialchars(trim($_POST['username']));
@@ -36,14 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup'])) {
 
     // Check for validation errors
     if ($validator->isValid()) {
-        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+        // $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
         try {
             $user = new User(Database::makeconnection());
             $_SESSION['username'] = $username;
 
-            if ($user->register($username, $email, $hashedPassword, $userType)) {
-                $_SESSION['user_id'] = $user->getPdo()->lastInsertId();
+            if ($user->register($username, $email, $password, $userType)) {
+                // $_SESSION['user_id'] = $user->getPdo()->lastInsertId();
                 header('Location: /Plateforme-de-Cours-en-Ligne-Youdemy/public/dashboard.php');
                 exit;
             } else {
@@ -154,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup'])) {
                 <div class="card-body">
                   <form method="POST">
                     <div class="input-group input-group-outline mb-3">
-                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                    <!--  -->
                       <label class="form-label">Name</label>
                       <input type="text" class="form-control" name="username">
                     </div>

@@ -10,11 +10,66 @@ class User extends AbstractUser {
         return $this->pdo;
     }
     
+    // public function register($username, $email, $password, $userType) {
+    //     if (empty($username) || empty($email) || empty($password) || empty($userType)) {
+    //         throw new \Exception("All fields are required.");
+    //     }
+
+    //     $stmt = $this->pdo->prepare("SELECT id FROM users WHERE email = :email");
+    //     $stmt->bindParam(':email', $email);
+    //     $stmt->execute();
+    //     if ($stmt->rowCount() > 0) {
+    //         throw new \Exception("Email already exists.");
+    //     }
+
+    //     // $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    //     $hashedPassword = $password;
+        
+    //     $query = "INSERT INTO users (username, email, password_hash, role) VALUES (:username, :email, :password_hash, :role)";
+    //     $stmt = $this->pdo->prepare($query);
+    //     $stmt->bindParam(':username', $username);
+    //     $stmt->bindParam(':email', $email);
+    //     $stmt->bindParam(':password_hash', $hashedPassword);
+    //     $stmt->bindParam(':role', $userType);
+
+
+    //     if ($stmt->execute()) {
+    //         return true; 
+    //     } else {
+    //         throw new \Exception("Database insertion failed."); 
+    //     }
+    // }
+
+    // public function login($email, $password) {
+    //     // if (empty($email) || empty($password)) {
+    //     //     throw new \Exception("email and password are required");
+    //     // }
+    
+    //     $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = :email");
+    //     $stmt->bindParam(':email', $email);
+    //     $stmt->execute();
+    //     $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+       
+    //     if ($user) {
+      
+    //         if (password_verify($password, trim($user['password_hash']))) {
+    //             return $user;
+    //         } else {
+    //             throw new \Exception(" invalid email or password");
+               
+    //         }
+    //     } else {
+    //         throw new \Exception("email is not exist.");
+    //     }
+    // }
+    
     public function register($username, $email, $password, $userType) {
         if (empty($username) || empty($email) || empty($password) || empty($userType)) {
             throw new \Exception("All fields are required.");
         }
 
+        // Check if email already exists
         $stmt = $this->pdo->prepare("SELECT id FROM users WHERE email = :email");
         $stmt->bindParam(':email', $email);
         $stmt->execute();
@@ -22,15 +77,17 @@ class User extends AbstractUser {
             throw new \Exception("Email already exists.");
         }
 
+        // Hash the password
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        // $hashedPassword = hash($password, 256);
         
+        // Insert new user into the database
         $query = "INSERT INTO users (username, email, password_hash, role) VALUES (:username, :email, :password_hash, :role)";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(':username', $username);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':password_hash', $hashedPassword);
         $stmt->bindParam(':role', $userType);
-
 
         if ($stmt->execute()) {
             return true; 
@@ -39,25 +96,39 @@ class User extends AbstractUser {
         }
     }
 
+    // Method to log in a user
     public function login($email, $password) {
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         if (empty($email) || empty($password)) {
             throw new \Exception("Email and password are required.");
         }
 
+        // Retrieve the user from the database
         $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = :email");
         $stmt->bindParam(':email', $email);
         $stmt->execute();
-        $user = $stmt->fetch(\PDO::FETCH_ASSOC);
-        echo trim($user['password_hash']);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
         // var_dump($user);
-        if (password_verify($password, trim($user['password_hash']))) {
-            echo "check!";
-            return $user;
-        } else {
-            throw new \Exception("Invalid email or password.");
-        }
-    }
 
+        // Check if user exists and verify password
+        // if ($user->rowCount()>0){
+        if ( password_verify($password, $user['password_hash'])) {
+            // Set session variables
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['role'] = $user['role']; // Store user role for authorization
+
+            
+        } 
+        return $user; // Return user data on success
+        // var_dump($user);
+        // else {
+        //     throw new \Exception("Invalid email or password."); // Password mismatch
+        // }
+    // }
+    }
+    
+    
 
 
     public static function getUserRole($user_id) {
@@ -99,6 +170,13 @@ class User extends AbstractUser {
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+
+    public function logout() {
+        session_start();
+        session_unset();
+        session_destroy();
     }
 
     

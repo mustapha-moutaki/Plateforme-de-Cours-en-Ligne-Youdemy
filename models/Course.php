@@ -11,7 +11,8 @@ abstract class Course extends Model {
         $this->pdo = $pdo;
     }
 
-    abstract public function addCourse($title, $content, $meta_description, $category_id);
+    // abstract public function addCourse($title, $content, $meta_description, $category_id);
+   abstract  public function addCourse($title, $content, $meta_description, $category_id, $teacher_id);
         
       abstract  public function addCourseTag($course_id, $tag_id);
 
@@ -26,15 +27,17 @@ abstract class Course extends Model {
     abstract public function deleteCourse($id);
 
     // Method to count the number of courses
-    public function countCourses() {
-        return $this->count('courses');
-    }
+    abstract public function countCourses();
 
     // Method to fetch a course by its ID
-   abstract public function getCourseById($id);
+    abstract public function getCoursesByUserId($userId);
 
    
-  abstract public function updateCourseStatus($courseId, $status);
+    abstract public function updateCourseStatus($courseId, $status);
+
+    abstract public function getCoursesByPage($page, $limit);
+
+    // abstract public function getTotalCourses();
 
 }
 
