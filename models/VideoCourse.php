@@ -2,6 +2,14 @@
 namespace Models;
 use PDO;
 class VideoCourse extends Course {
+
+    private $pdo;
+
+    public function __construct($pdo) {
+        $this->pdo = $pdo; // Initialize the PDO instance
+    }
+
+    
     public function addCourse($title, $content, $meta_description, $category_id, $teacher_id) {
         $sql = "INSERT INTO courses (title, video_content, meta_description, category_id, teacher_id)
                 VALUES (:title, :video_url, :meta_description, :category_id, :teacher_id)";
@@ -29,6 +37,13 @@ class VideoCourse extends Course {
     public function getAllCourses() {
         return $this->select($this->table);
     }
+
+    public function getAllCoursesAccepted() {
+        $where = "status = :status"; // Adding condition for accepted status
+        $params = [':status' => 'accepted']; // Binding the 'accepted' status
+        return $this->select($this->table, "*", $where, $params);
+    }
+    
 
     public function updateCourse($id, $title, $description, $category) {
         return $this->update($this->table, [
@@ -68,7 +83,7 @@ class VideoCourse extends Course {
 
     public function getCoursesByPage($page, $limit) {
         $offset = ($page - 1) * $limit;
-        $stmt = $this->pdo->prepare("SELECT * FROM courses LIMIT :limit OFFSET :offset");
+        $stmt = $this->pdo->prepare("SELECT * FROM courses WHERE status = 'accepted' LIMIT :limit OFFSET :offset");
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
@@ -78,6 +93,17 @@ class VideoCourse extends Course {
     public function countCourses() {
         return $this->count('courses');
     }
+
+    public function updateStatus($courseId, $status) {
+        
+        $sql = "UPDATE courses SET status = :status WHERE id = :course_id";
+        $stmt = $this->pdo->prepare($sql);
+    
+        $stmt->bindParam(':status', $status);
+        $stmt->bindParam(':course_id', $courseId, PDO::PARAM_INT);
+    
+        return $stmt->execute();
+    }
     
     // public function getTotalCourses() {
     //     $db = \Config\Database::connect(); // Charge la connexion configurée
@@ -85,4 +111,47 @@ class VideoCourse extends Course {
     //     $result = $query->getRowArray();
     //     return $result['total'];
     // }
+
+    public function enrollCourse($userId, $courseId) {
+        try {
+            $checkSql = "SELECT COUNT(*) FROM course_enrollments WHERE user_id = :user_id AND course_id = :course_id";
+            $checkStmt = $this->pdo->prepare($checkSql);
+            $checkStmt->execute([':user_id' => $userId, ':course_id' => $courseId]);
+            $isEnrolled = $checkStmt->fetchColumn();
+
+            if ($isEnrolled > 0) {
+                return false; // User is already enrolled
+            }
+
+            $sql = "INSERT INTO course_enrollments (user_id, course_id) VALUES (:user_id, :course_id)";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+            $stmt->bindParam(':course_id', $courseId, PDO::PARAM_INT);
+            $stmt->execute();
+
+            return true; // Successfully enrolled
+        } catch (PDOException $e) {
+            error_log("Enrollment Error: " . $e->getMessage());
+            return false; // Error during enrollment
+        }
+    }
+
+
+    
+    public function getCoursesById($userId) {
+        $sql = "SELECT courses.*, course_enrollments.user_id, course_enrollments.course_status
+                FROM courses 
+                JOIN course_enrollments ON courses.id = course_enrollments.course_id 
+                WHERE course_enrollments.user_id = :userId";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+        // $stmt->bindParam(':course_status', $course_status, PDO::PARAM_STR);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+  
+    
+    
 }

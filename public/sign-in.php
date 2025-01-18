@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
           header('Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/public/dashboard.php'); 
           exit;
       }else{
-        header('Location: test.php');
+        header('Location: notfound.php');
       }
   } catch (Exception) {
      echo "Invalid email or password."; 

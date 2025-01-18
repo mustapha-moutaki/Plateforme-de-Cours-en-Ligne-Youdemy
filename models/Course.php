@@ -37,7 +37,11 @@ abstract class Course extends Model {
 
     abstract public function getCoursesByPage($page, $limit);
 
+    abstract function updateStatus($update_course_status, $statusName);
     // abstract public function getTotalCourses();
+    abstract public function enrollCourse($userId, $courseId);
+    
+    abstract public function getCoursesById($userId);
 
 }
 

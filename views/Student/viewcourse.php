@@ -25,11 +25,11 @@ try {
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['markAsCompleted'])) {
         $courseId = $_POST['course_id'];
-        $newStatus = 'completed';
+        $newStatus = 'complete';
 
         if ($courseModel->updateCourseStatus($courseId, $newStatus)) {
             $completedMessage = "Course marked as completed successfully!";
-            $course = $courseModel->getCourseById($courseId); // تحديث بيانات الدورة
+            $course = $courseModel->getCourseById($courseId); 
         } else {
             throw new Exception("Failed to update course status.");
         }

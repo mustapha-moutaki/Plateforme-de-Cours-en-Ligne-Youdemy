@@ -64,62 +64,62 @@ if (isset($_SESSION['user_id']) ?? 'User') {
         </li>
         <?php endif; ?>
 
-        <?php if (isset($user['role']) && $user['role'] == 'admin'): ?>
+        
         <li class="nav-item">
           <a class="nav-link text-dark" href="/Plateforme-de-Cours-en-Ligne-Youdemy/views/Student/mycourses.php">
             <i class="material-symbols-rounded opacity-5">table_view</i>
             <span class="nav-link-text ms-1">My Courses</span>
           </a>
         </li>
-        <?php endif; ?>
+  
 
-        <?php if (isset($user['role']) && $user['role'] == 'admin'): ?>
+        <!--?php if (isset($user['role']) && $user['role'] == 'admin'): ?-->
         <li class="nav-item">
           <a class="nav-link text-dark" href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/student/manageStudents.php">
             <i class="material-symbols-rounded opacity-5">receipt_long</i>
             <span class="nav-link-text ms-1">Manage Students</span>
           </a>
         </li>
-        <?php endif; ?>
+        <!--?php endif; ?-->
 
-        <?php if (isset($user['role'], $user['status']) && 
+        <!--?php if (isset($user['role'], $user['status']) && 
           ($user['role'] == 'admin') && 
-          $user['status'] == 'active'): ?>
+          $user['status'] == 'active'): ?-->
         <li class="nav-item">
           <a class="nav-link text-dark" href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/courses/manageCourses.php">
             <i class="material-symbols-rounded opacity-5">view_in_ar</i>
             <span class="nav-link-text ms-1">Manage courses</span>
           </a>
         </li>
-          <?php endif; ?>
+          <!--?php endif; ?-->
 
 
           
-        <?php if (isset($user['role'], $user['status']) && 
+        <!--?php if (isset($user['role'], $user['status']) && 
           ($user['role'] == 'teacher') && 
-          $user['status'] == 'active'): ?>
+          $user['status'] == 'active'): ?-->
         <li class="nav-item">
           <a class="nav-link text-dark" href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/Courses/manageCoursesTeacher.php">
             <i class="material-symbols-rounded opacity-5">view_in_ar</i>
             <span class="nav-link-text ms-1">Manage courses</span>
           </a>
         </li>
-          <?php endif; ?>
+          <!--?php endif; ?-->
 
 
 
           
 
-          <?php if (isset($user['role']) && $user['role'] == 'admin'): ?>
+          <!--?php if (isset($user['role']) && $user['role'] == 'admin'): ?-->
         <li class="nav-item">
         <a class="nav-link text-dark" href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/Categories/manageCategories.php">
         <i class="material-symbols-rounded opacity-5">school</i>
      <span>Manage Categories</span>
         </a>
         </li>
-           <?php endif; ?>
+           <!--?php endif; ?-->
 
-           <?php if (isset($user['role']) && $user['role'] == 'admin'): ?>
+           <!--?php if (isset($user['role']) && $user['role'] == 'admin'): ?-->
           
          
         <li class="nav-item">
@@ -128,7 +128,7 @@ if (isset($_SESSION['user_id']) ?? 'User') {
     <span class="nav-link-text ms-1">Manage Tags</span>
   </a>
 </li>
- <?php endif; ?>
+ <!--?php endif; ?-->
         <li class="nav-item">
           <a class="nav-link text-dark" href="../pages/notifications.html">
             <i class="material-symbols-rounded opacity-5">notifications</i>

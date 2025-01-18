@@ -8,7 +8,6 @@ use Models\Course;
 use Models\DocumentCourse;
 use Models\Teacher;
 $pdo = new database();
-// $conn = $pdo ->makeconnection();
 
 $categoryModel = new Category($pdo);
 $tagModel = new Tag($pdo);
@@ -50,17 +49,14 @@ $totalCourses = $courseModel->getAllCourses();
 
 $limit = 6;
 
-// الصفحة الحالية
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
-// عدد الدورات الإجمالي
 $courseCount = $courseModel->countCourses();
 
-// عدد الصفحات الكلي
 $totalPages = ceil($courseCount / $limit);
 
-// استرجاع الدورات للصفحة الحالية
 $courses = $courseModel->getCoursesByPage($page, $limit);
+
 ?>
 
 <!DOCTYPE html>
@@ -105,12 +101,19 @@ $courses = $courseModel->getCoursesByPage($page, $limit);
             <div class="flex space-x-6">
                 <div>
                     <label for="categoryFilter" class="text-lg text-gray-700">Category:</label>
-                    <select id="categoryFilter" class="bg-gray-100 p-2 rounded-lg shadow-sm">
-                        <option value="">All</option>
-                        <?php  foreach ($getAllCategories as $category):?>
-                        <option value=""><?php echo $category['name'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                    <?php
+$selectedCategory = isset($_GET['category']) ? $_GET['category'] : '';
+$selectedTag = isset($_GET['tag']) ? $_GET['tag'] : '';
+?>
+<select id="categoryFilter" class="bg-gray-100 p-2 rounded-lg shadow-sm">
+    <option value="">All</option>
+    <?php foreach ($getAllCategories as $category): ?>
+        <option value="<?= $category['id'] ?>" <?= $category['id'] == $selectedCategory ? 'selected' : '' ?>>
+            <?= $category['name'] ?>
+        </option>
+    <?php endforeach; ?>
+</select>
+
                 </div>
 
                 <div>
@@ -142,6 +145,7 @@ $courses = $courseModel->getCoursesByPage($page, $limit);
         <?php foreach ($courses as $course): ?>
             <div class="course bg-white shadow-lg rounded-lg overflow-hidden hover:scale-105 transform transition duration-300">
                 <!-- Add course image or video content dynamically -->
+                 
                 <?php if($course['video_content'] != null): ?>
                     <!-- If video content exists -->
                     <iframe src="<?= $course['video_content']; ?>" frameborder="0" class="w-full h-48 object-cover"></iframe>
@@ -157,7 +161,13 @@ $courses = $courseModel->getCoursesByPage($page, $limit);
                     <h3 class="text-2xl font-semibold text-indigo-800"><?= $course['title'] ?></h3>
                     <p class="text-gray-600 mt-2"><?= $course['meta_description'] ?></p>
                     <div class="mt-4 flex justify-between items-center">
-                        <a href="viewcourse.php?course_id=<?= $course['id'] ?>" class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition duration-300 ease-in-out">Learn More</a>
+                        <!-- <a href="viewcourse.php?course_id=<?= $course['id'] ?>" class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition duration-300 ease-in-out">Learn More</a> -->
+
+                                            <a 
+                        href="<?= $isLoggedIn ? 'course.php?id=' . $course['id'] : 'sign-up.php'; ?>" 
+                        class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition duration-300 ease-in-out">
+                        Learn More
+                    </a>
                     </div>
                 </div>
             </div>

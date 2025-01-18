@@ -49,6 +49,7 @@ abstract class Model {
         $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
 
     public function count($table) {
         $pdo = Database::makeConnection(); 

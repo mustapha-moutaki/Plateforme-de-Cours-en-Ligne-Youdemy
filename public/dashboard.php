@@ -13,12 +13,16 @@ $pdo = new database();
 $conn = $pdo ->makeconnection();
 
 session_start();
+if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
+  header('Location: sign-in.php');
+  exit;
+}
 
-if (isset($_SESSION['username']) && isset($_SESSION['user_id'])) {
+// if (isset($_SESSION['username']) && isset($_SESSION['user_id'])) {
     $username = $_SESSION['username'];
     $user_id = $_SESSION['user_id'];
     
-}
+// }
 //---------------------------
 // <?php if (isset($user['role']) && $user['role'] == 'admin'):?-->
 //------------------------
@@ -46,7 +50,28 @@ $tagCount = $tagModel->countTags();
 $teacherCount = $teacherModel->countTeachers();  
 $courseCount = $courseModel->countCourses(); 
 
-$getAllCourses = $courseModel->getAllCourses();
+$getAllCourses = $courseModel->getAllCoursesAccepted();
+
+$coursemodelv = new DocumentCourse($pdo);
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['joinCourse'])) {
+  $userId = $_POST['user_id'];
+  $courseId = $_POST['course_id'];
+
+  // Enroll the user in the course
+  $isEnrolled = $coursemodelv->enrollCourse($userId, $courseId);
+
+  if ($isEnrolled) {
+      header("Location: ../views/student/viewCourse.php?course_id=" . $courseId);
+  } else{
+    echo"you have already joined this course !";
+  }
+  exit;
+}
+
+
+
 // $allteacher = $teacherModel->getAllCourses();
 // $coursedocMedel = new DocumentCourse($pdo);
 // $teacherCourses = $coursedocMedel->getCoursesByUserId($user_id);
@@ -205,19 +230,38 @@ include_once './components/sidebar.php';
     <!--for the teacher  -->
       <!-- Courses Cards -->
       <div class="row" id="coursesContainer">
-      <!-- Course Card 1 -->
-       <?php foreach($getAllCourses as $course): ?>
-      <div class="col-md-4 mb-4 course-card" data-category="web">
+    <?php foreach($getAllCourses as $course): ?>
+    <div class="col-md-4 mb-4 course-card" data-category="web">
         <div class="card shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title"><?php echo $course['title'] ?></h5>
-            <p class="card-text"><i>learn:</i><br><?php echo $course['meta_description'] ?></p>
-            <!-- <p class="text-muted">Duration: 2 hours</p> -->
-            <a href="#" class="btn btn-primary">Learn More</a>
-          </div>
+            <div class="card-body">
+                <?php if($course['video_content'] != null): ?>
+                    <!-- If video content exists -->
+                    <iframe src="<?= $course['video_content']; ?>" frameborder="0" class="w-full h-48 object-cover"></iframe>
+                <?php elseif($course['document_content'] != null): ?>
+                    <!-- If document content exists (fallback image and document) -->
+                    <img src="https://i.pinimg.com/736x/1b/7b/e2/1b7be209fee3fd17943a981b5508384e.jpg" 
+                         alt="Course Image" 
+                         class="w-full h-48 object-cover">
+                    <p class="mt-2"><?= $course['document_content']; ?></p>
+                <?php endif; ?>
+                <h5 class="card-title"><?php echo $course['title'] ?></h5>
+                <p class="card-text"><i>learn:</i><br><?php echo $course['meta_description'] ?></p>
+                <form method="POST" action="">
+                        <input type="hidden" name="user_id" value="<?= $_SESSION['user_id']; ?>">
+                        <input type="hidden" name="course_id" value="<?= $course['id']; ?>">
+                        <button type="submit" name="joinCourse" class="btn btn-primary">
+                        Join Course
+    </button>
+                    </form>
+
+                <!-- Button to redirect to course view page and enroll the user -->
+             
+            </div>
         </div>
-      </div>
+    </div>
     <?php endforeach; ?>
+</div>
+
      <?php
      include_once './components/footer.php';
      ?>

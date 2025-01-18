@@ -72,4 +72,16 @@ CREATE INDEX idx_tag_name ON tags(name);
 CREATE INDEX idx_category_name ON categories(name);
 
 ALTER TABLE courses 
-ADD COLUMN status ENUM('completed', 'incompleted') DEFAULT 'incompleted';
+ADD COLUMN status ENUM('pending', 'accepted', 'refused') DEFAULT 'pending';
+
+CREATE TABLE course_enrollments (
+    enrollment_id INT AUTO_INCREMENT PRIMARY KEY,    
+    user_id INT NOT NULL,                            
+    course_id INT NOT NULL,                          
+    enrollment_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    course_status ENUM('incomplete', 'complete') DEFAULT 'incomplete',
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (course_id) REFERENCES courses(id) 
+    ON DELETE CASCADE  
+);
+

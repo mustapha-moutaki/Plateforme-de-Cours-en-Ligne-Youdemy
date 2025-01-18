@@ -18,39 +18,15 @@ $userId = $_SESSION['user_id'];
 // Fetch all courses
 
 $getAllCourses = $courseModel->getAllCourses(); // Adjust this method as needed
-$getAllCoursesOfStudent = $courseModel->getCoursesById($userId); // Adjust this method as needed
 
-// Separate courses into completed and not completed
-$completeStudentCourses = [];
-$incompleteStuedntCourses = [];
-
-// foreach ($getAllCourses as $course) {
-//     if ($course['status'] === 'completed') {
-//         $completedCourses[] = $course;
-//     } else {
-//         $incompleteCourses[] = $course;
-//     }
-// }
-
-foreach($getAllCoursesOfStudent as $StudentCourse){
-    if($StudentCourse['course_status']=='complete'){
-        $completeStudentCourses[] = $StudentCourse;
-    }else{
-        $incompleteStuedntCourses [] = $StudentCourse;
-    }
-}
-
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['completeCourse'])) {
-    // $userId = $_POST['user_id'];
-    
-    $courseId = $_POST['course_id'];
-   $course = $courseModel->getCourseById($courseId);
-    header("Location: ../views/student/viewcourse.php?course_id=" . $courseId);
-    exit();
-    
-  }
-
+if (isset($_GET['delete_id'])) {
+    $deleteId = $_GET['delete_id'];
+    if ($courseModel->deleteCourse($deleteId)) {
+        header('Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/teacher/manageCourses.php');
+        exit();
+    } else {
+        echo "Failed to delete the course.";
+    }}
 ?>
 
 <!DOCTYPE html>
@@ -89,12 +65,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['completeCourse'])) {
           <div class="card my-4">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
               <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize ps-3">My Courses</h6>
+                <h6 class="text-white text-capitalize ps-3">teacher: manage Courses</h6>
               </div>
             </div>
 
             <div class="card-body px-4 pb-2">
-              <h5>Incomplete Courses</h5>
               <div class="table-responsive p-0">
                 <table class="table align-items-left mb-0">
                   <thead>
@@ -106,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['completeCourse'])) {
                     </tr>
                   </thead>
                   <tbody>
-                    <?php foreach($incompleteStuedntCourses as $course): ?>
+                    <?php foreach($getAllCourses as $course): ?>
                     <tr>
                       <td><?php echo $course['id']; ?></td>
                       <td><?php echo $course['title']; ?></td>
@@ -115,7 +90,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['completeCourse'])) {
                       <form method="POST">
                 <input type="hidden" name="course_id" value="<?php echo $course['id']; ?>">
                 <button type="submit" class="btn btn-primary" name="completeCourse">
-                    Complete</button>
+                    edit</button>
+
+                    <button class="btn btn-sm btn-danger"><a href="?delete_id=<?php echo $course['id']; ?>" onclick="return confirm('Are you sure you want to delete this course?')">Delete</a></button>
             </form>
                       </td>
                     </tr>
@@ -123,31 +100,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['completeCourse'])) {
                   </tbody>
                 </table>
               </div>
-
-              <h5 class="mt-4">Completed Courses</h5>
-              <div class="table-responsive p-0">
-                <table class="table align-items-center mb-0">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Name</th>
-                      <th>description</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <?php foreach($completeStudentCourses as $course): ?>
-                    <tr>
-                      <td><?php echo $course['id']; ?></td>
-                      <td><?php echo $course['title']; ?></td>
-                      <td><?php echo $course['meta_description']; ?></td>
-                      <td>
-                       
-                        <button class="btn btn-success"><a href="editCourse.php?id=<?php echo $course['id']; ?>">certificat</a></button>
-                      </td>
-                    </tr>
-                    <?php endforeach; ?>
-                  </tbody>
                 </table>
               </div>
             </div>

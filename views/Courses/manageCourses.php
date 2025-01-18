@@ -28,9 +28,6 @@ $AllCategoriesName =$categoryModel->getAllCategoriesName();
 // $getallcoursesofteacher = $courseModel ->getCourseById();
 
 
-
-
- 
 // If there's a delete request, process it
 if (isset($_GET['delete_id'])) {
     $deleteId = $_GET['delete_id'];
@@ -41,6 +38,15 @@ if (isset($_GET['delete_id'])) {
         echo "Failed to delete the course.";
     }
 }
+
+if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['update_course_status'])){
+  $update_course_status = $_POST['course_id'];
+  $statusName = $_POST['status'];
+  if ($courseModel->updateStatus($update_course_status, $statusName)) {
+    header("Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/courses/manageCourses.php");
+}
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -96,6 +102,7 @@ if (isset($_GET['delete_id'])) {
           <th scope="col">Category</th>
           <th scope="col">Tags</th>
           <th scope="col">Action</th>
+          <th scope="col">Status</th>
         </tr>
       </thead>
       <tbody id="courseTableBody">
@@ -119,18 +126,32 @@ if (isset($_GET['delete_id'])) {
             ?>
         </td>
 
-      
+       <td>
         <?php foreach($getAllTagsName as $tag): ?>
-            <td><?php echo $tag['tags'] ?></td>
+           <?php echo $tag['tags'] ?>
         <?php endforeach; ?>
         
+        </td>
 
         <td>
         <button class="btn btn-sm btn-danger"><a href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/courses/manageCourses.php?delete_id=<?php echo $course['id']; ?>" onclick="return confirm('Are you sure you want to delete this course?')">Delete</a></button>
-        </td>
+        </td> 
+           <td>
+                        <form action="" method="POST">
+                        <input type="hidden" name="course_id" value="<?= $course['id']; ?>">
+                      <select class="form-select form-select-sm" name="status">
+                  <option value="refused" <?php echo ($course['status'] === 'refused') ? 'selected' : ''; ?>>refused</option>
+                  <option value="accepted" <?php echo ($course['status'] === 'accepted') ? 'selected' : ''; ?>>accepted</option>
+                  <option value="pending" <?php echo ($course['status'] === 'pending') ? 'selected' : ''; ?>>Pending</option>
+                    </select>
+                    <button type="submit" name="update_course_status" class="btn btn-primary px-4 py-1 mt-2">
+                      Save
+                    </button>
+                  </form>
+                  </td>
     </tr>
 
-    
+
 <?php endforeach; ?>
 
 
