@@ -185,4 +185,21 @@ class DocumentCourse extends Course {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+    public function getMostEnrolledCourse($teacherId):array {
+        // $pdo = Database::makeConnection();
+        $sql = "SELECT courses.title AS course_title, COUNT(course_enrollments.user_id) AS total_students
+                FROM course_enrollments
+                JOIN courses ON course_enrollments.course_id = courses.id
+                WHERE courses.teacher_id = :teacherId
+                GROUP BY courses.id
+                ORDER BY total_students DESC
+                LIMIT 1";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':teacherId', $teacherId, PDO::PARAM_INT); // Bind teacherId
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch the single result
+        return $result ?: null; // Return result or null if no courses found
+    }
+
+
 }

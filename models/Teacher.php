@@ -41,6 +41,21 @@ use PDO;
            return $stmt->fetchColumn();
         }
 
+        public function joinCourses($userId){
+            $pdo = Database::makeConnection();
+            $sql = "SELECT courses.id AS course_id, COUNT(course_enrollments.user_id) AS total_students
+                    FROM course_enrollments
+                    JOIN courses ON course_enrollments.course_id = courses.id
+                    WHERE courses.teacher_id = :userId
+                    GROUP BY courses.id";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);  // Ensure userId is treated as an integer
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);  // Return results as an associative array
+        }
+        
+        
+
     }
 
 ?>

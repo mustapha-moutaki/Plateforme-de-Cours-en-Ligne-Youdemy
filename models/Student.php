@@ -31,6 +31,7 @@ use PDO;
             return $this->update($this->table, ['status' => $status], 'id', $id);
         }
 
+
     }
 
 ?>

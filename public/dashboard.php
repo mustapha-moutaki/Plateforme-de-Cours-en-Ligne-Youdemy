@@ -27,16 +27,6 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
 // <?php if (isset($user['role']) && $user['role'] == 'admin'):?-->
 //------------------------
 $userRole = User::getUserRole($user_id);
-if($userRole === 'admin'){
-    echo"------------------------------------------im admin";
-   
-}elseif($userRole === 'student'){
-    echo"------------------------------------------im a student";
-    
-}else{
-    echo"------------------------------------------ none";
-    
-}
 
 // Create an instance of the Category model
 $categoryModel = new Category($pdo);
@@ -72,17 +62,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['joinCourse'])) {
   }
   exit;
 }
-echo $user_id;
+// echo $user_id;
 $userModel = new Teacher($pdo);
-$countteacherCourses = $userModel ->  countTeacherCourses($user_id)
-// $allteacher = $teacherModel->getAllCourses();
-// $coursedocMedel = new DocumentCourse($pdo);
-// $teacherCourses = $coursedocMedel->getCoursesByUserId($user_id);
-// $articleModel = new Article($pdo);
-// $mostViewedArticles = $articleModel->getMostViewedArticles();
+$countteacherCourses = $userModel ->  countTeacherCourses($user_id);
 
-// $authorModel = new Author($pdo);
-// $top3Authors = $authorModel->getTop3AuthorsByViews();
+$totalstudentIncourse = $userModel -> joinCourses($user_id);
+
+$teacherId = 3; // Example teacher ID
+$courseData = $coursemodelv->getMostEnrolledCourse($teacherId);
 
 
 
@@ -138,9 +125,7 @@ include_once './components/sidebar.php';
                   <?php if (isset($user['role']) && $user['role'] == 'admin'): ?>
                   <h4 class="mb-0 text-dark"><?php echo $courseCount; ?></h4>
                   <?php endif; ?>
-                  <?php if (isset($user['role']) && $user['role'] == 'teacher'): ?>
-                  <h4 class="mb-0 text-dark"><?php echo $countteacherCourses; ?></h4>
-                  <?php endif; ?>
+                 
                 </div>
                 <div class="icon icon-md icon-shape bg-gradient-primary text-white shadow text-center rounded-circle">
                   <i class="material-symbols-rounded">menu_book</i>
@@ -197,23 +182,30 @@ include_once './components/sidebar.php';
           
         </div>
         <div class="col-xl-3 col-sm-6">
-          <div class="card">
-            <div class="card-header p-3">
-              <div class="d-flex justify-content-between">
-                <div>
-                  <p class="text-sm mb-0 text-uppercase text-success font-weight-bold">Total Number of Teachers</p>
-                  <h4 class="mb-0 text-dark"><?php echo $teacherCount; ?></h4>
-                </div>
-                <div class="icon icon-md icon-shape bg-gradient-success text-white shadow text-center rounded-circle">
-                  <i class="material-symbols-rounded">school</i>
-                </div>
-              </div>
-            </div>
-            <hr class="horizontal my-0 bg-success">
-            <div class="card-footer p-3">
-              
-            </div>
-          </div>
+        <div class="card">
+  <div class="card-header p-3">
+    <div class="d-flex justify-content-between">
+      <?php if (isset($user['role']) && $user['role'] == 'admin'): ?>
+        <div>
+          <p class="text-sm mb-0 text-uppercase text-success font-weight-bold">Total Number of Teachers</p>
+          <h4 class="mb-0 text-dark"><?php echo $teacherCount; ?></h4>
+        </div>
+      <?php elseif (isset($user['role']) && ($user['role'] == 'student' || $user['role'] == 'teacher')): ?>
+        <div>
+          <p class="text-sm mb-0 text-uppercase text-success">Top course</p>
+          <h4 class="mb-0 text-dark text-md"><?php echo 'top course: '. $courseData['course_title']; ?></h4>
+          <h4 class="mb-0 text-dark text-md"><?php echo 'student join: '.$courseData['total_students']; ?></h4>
+        </div>
+      <?php endif; ?>
+      <div class="icon icon-md icon-shape bg-gradient-success text-white shadow text-center rounded-circle">
+        <i class="material-symbols-rounded">school</i>
+      </div>
+    </div>
+  </div>
+  <hr class="horizontal my-0 bg-success">
+  <div class="card-footer p-3"></div>
+</div>
+
           
         </div>
       </div>

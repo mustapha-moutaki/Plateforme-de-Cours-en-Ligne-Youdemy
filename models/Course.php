@@ -45,6 +45,8 @@ abstract class Course extends Model {
 
     abstract public function getTagsByCourseId($course_id);
 
+    abstract public function getMostEnrolledCourse($teacherId);
+
 }
 
 
