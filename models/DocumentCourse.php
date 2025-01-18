@@ -56,7 +56,7 @@ class DocumentCourse extends Course {
         return $this->update($this->table, [
             'title' => $title,
             'description' => $description,
-            'category' => $category
+            'category_id' => $category
         ], 'id', $id);
     }
     public function deleteCourse($id) {
@@ -173,4 +173,16 @@ class DocumentCourse extends Course {
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getTagsByCourseId($course_id){
+    $sql = "SELECT t.id, t.name 
+            FROM tags t 
+            JOIN course_tag ct ON ct.tag_id = t.id 
+            WHERE ct.course_id = :course_id";
+
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute(['course_id' => $course_id]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 }

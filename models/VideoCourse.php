@@ -45,11 +45,11 @@ class VideoCourse extends Course {
     }
     
 
-    public function updateCourse($id, $title, $description, $category) {
+    public function updateCourse($id, $title, $meta_description, $category) {
         return $this->update($this->table, [
             'title' => $title,
-            'description' => $description,
-            'category' => $category
+            'meta_description' => $meta_description,
+            'name' => $category
         ], 'id', $id);
     }
 
@@ -152,6 +152,15 @@ class VideoCourse extends Course {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
   
+    public function getTagsByCourseId($course_id){
+        $sql = "SELECT t.id, t.name 
+                FROM tags t 
+                JOIN course_tag ct ON ct.tag_id = t.id 
+                WHERE ct.course_id = :course_id";
     
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['course_id' => $course_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     
 }

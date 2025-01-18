@@ -29,10 +29,13 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
 $userRole = User::getUserRole($user_id);
 if($userRole === 'admin'){
     echo"------------------------------------------im admin";
+   
 }elseif($userRole === 'student'){
     echo"------------------------------------------im a student";
+    
 }else{
     echo"------------------------------------------ none";
+    
 }
 
 // Create an instance of the Category model
@@ -69,9 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['joinCourse'])) {
   }
   exit;
 }
-
-
-
+echo $user_id;
+$userModel = new Teacher($pdo);
+$countteacherCourses = $userModel ->  countTeacherCourses($user_id)
 // $allteacher = $teacherModel->getAllCourses();
 // $coursedocMedel = new DocumentCourse($pdo);
 // $teacherCourses = $coursedocMedel->getCoursesByUserId($user_id);
@@ -132,7 +135,12 @@ include_once './components/sidebar.php';
               <div class="d-flex justify-content-between">
                 <div>
                   <p class="text-sm mb-0 text-uppercase text-primary font-weight-bold">Total Number of Courses</p>
+                  <?php if (isset($user['role']) && $user['role'] == 'admin'): ?>
                   <h4 class="mb-0 text-dark"><?php echo $courseCount; ?></h4>
+                  <?php endif; ?>
+                  <?php if (isset($user['role']) && $user['role'] == 'teacher'): ?>
+                  <h4 class="mb-0 text-dark"><?php echo $countteacherCourses; ?></h4>
+                  <?php endif; ?>
                 </div>
                 <div class="icon icon-md icon-shape bg-gradient-primary text-white shadow text-center rounded-circle">
                   <i class="material-symbols-rounded">menu_book</i>
@@ -251,7 +259,7 @@ include_once './components/sidebar.php';
                         <input type="hidden" name="course_id" value="<?= $course['id']; ?>">
                         <button type="submit" name="joinCourse" class="btn btn-primary">
                         Join Course
-    </button>
+                    </button>
                     </form>
 
                 <!-- Button to redirect to course view page and enroll the user -->

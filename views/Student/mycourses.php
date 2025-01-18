@@ -3,6 +3,7 @@ require_once '../../vendor/autoload.php';
 use Config\Database; 
 use Models\Course; 
 use Models\VideoCourse; 
+use Models\DocumentCourse; 
 session_start();
 // Get the connection instance
 $pdo = Database::makeConnection();  // Ensure the connection is successful
@@ -41,16 +42,21 @@ foreach($getAllCoursesOfStudent as $StudentCourse){
 }
 
 
+$coursemodelv = new DocumentCourse();
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['completeCourse'])) {
-    // $userId = $_POST['user_id'];
-    
+    $userId = $_POST['user_id'];
     $courseId = $_POST['course_id'];
-   $course = $courseModel->getCourseById($courseId);
-    header("Location: ../views/student/viewcourse.php?course_id=" . $courseId);
-    exit();
-    
-  }
+  
+    // Enroll the user in the course
+    $isEnrolled = $coursemodelv->enrollCourse($userId, $courseId);
+  
+    if ($isEnrolled) {
+        header("Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/Student/viewcourse.php?course_id=" . $courseId);
+    }else{
+        header("Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/Student/viewcourse.php?course_id=" . $courseId);
+    }
 
+  }
 ?>
 
 <!DOCTYPE html>
@@ -114,6 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['completeCourse'])) {
                       <td>
                       <form method="POST">
                 <input type="hidden" name="course_id" value="<?php echo $course['id']; ?>">
+                <input type="hidden" name="user_id" value="<?php echo $userId; ?>">
                 <button type="submit" class="btn btn-primary" name="completeCourse">
                     Complete</button>
             </form>

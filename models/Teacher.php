@@ -32,6 +32,15 @@ use PDO;
             return $this->update($this->table, ['status' => $status], 'id', $id);
         }
 
+        public function countTeacherCourses($teacherId) {
+           $pdo = Database::makeconnection();
+           $sql = "SELECT COUNT(*) FROM courses WHERE teacher_id = :teacherId";
+           $stmt = $pdo->prepare($sql);
+           $stmt ->bindvalue(':teacherId', $teacherId);
+           $stmt ->execute();
+           return $stmt->fetchColumn();
+        }
+
     }
 
 ?>

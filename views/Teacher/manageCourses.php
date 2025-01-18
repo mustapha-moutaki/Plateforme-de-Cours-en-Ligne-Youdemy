@@ -17,7 +17,7 @@ try {
 $userId = $_SESSION['user_id'];
 // Fetch all courses
 
-$getAllCourses = $courseModel->getAllCourses(); // Adjust this method as needed
+$getAllCourses = $courseModel->getCoursesByUserId($userId); 
 
 if (isset($_GET['delete_id'])) {
     $deleteId = $_GET['delete_id'];
@@ -27,6 +27,15 @@ if (isset($_GET['delete_id'])) {
     } else {
         echo "Failed to delete the course.";
     }}
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_course'])) {
+        $courseid = $_POST['course_id'];
+        if ($studentModel->updateCourse($courseid)) {
+          header("Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/student/managestudents.php");
+          exit();
+        }
+      }
+
 ?>
 
 <!DOCTYPE html>
@@ -40,6 +49,7 @@ if (isset($_GET['delete_id'])) {
   <title>
     Manage Courses
   </title>
+  
   <!--     Fonts and icons     -->
   <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,900" />
   <!-- Nucleo Icons -->
@@ -60,11 +70,13 @@ if (isset($_GET['delete_id'])) {
     <!-- End Navbar -->
 
     <div class="container-fluid py-2">
+    <a href="\Plateforme-de-Cours-en-Ligne-Youdemy\views\Courses\addCourse.php"><button class="btn btn-primary mb-4">Add Course</button></a>
       <div class="row">
         <div class="col-12">
           <div class="card my-4">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
               <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
+                
                 <h6 class="text-white text-capitalize ps-3">teacher: manage Courses</h6>
               </div>
             </div>
@@ -89,8 +101,9 @@ if (isset($_GET['delete_id'])) {
                       <td>
                       <form method="POST">
                 <input type="hidden" name="course_id" value="<?php echo $course['id']; ?>">
-                <button type="submit" class="btn btn-primary" name="completeCourse">
-                    edit</button>
+                <a href="editCourse.php?edit_id=<?php echo $course['id']; ?>" class="btn btn-primary">
+            Edit
+        </a>
 
                     <button class="btn btn-sm btn-danger"><a href="?delete_id=<?php echo $course['id']; ?>" onclick="return confirm('Are you sure you want to delete this course?')">Delete</a></button>
             </form>

@@ -43,6 +43,8 @@ abstract class Course extends Model {
     
     abstract public function getCoursesById($userId);
 
+    abstract public function getTagsByCourseId($course_id);
+
 }
 
 

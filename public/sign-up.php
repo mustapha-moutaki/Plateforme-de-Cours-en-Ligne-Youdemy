@@ -43,8 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup'])) {
             $_SESSION['username'] = $username;
 
             if ($user->register($username, $email, $password, $userType)) {
-                // $_SESSION['user_id'] = $user->getPdo()->lastInsertId();
-                header('Location: /Plateforme-de-Cours-en-Ligne-Youdemy/public/dashboard.php');
+                header('Location: /Plateforme-de-Cours-en-Ligne-Youdemy/public/sign-in.php');
                 exit;
             } else {
                 echo "Please try again.";

@@ -58,7 +58,7 @@ abstract class Model {
         $stmt->execute();  
         return $stmt->fetchColumn();  
     }
-
+    
     public function countTeacher($table) {
         $pdo = Database::makeConnection(); 
         $sql = "SELECT COUNT(*) FROM $table WHERE role = 'teacher'";

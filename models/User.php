@@ -108,10 +108,7 @@ class User extends AbstractUser {
         $stmt->bindParam(':email', $email);
         $stmt->execute();
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        // var_dump($user);
-
-        // Check if user exists and verify password
-        // if ($user->rowCount()>0){
+      
         if ( password_verify($password, $user['password_hash'])) {
             // Set session variables
             $_SESSION['user_id'] = $user['id'];
@@ -121,11 +118,7 @@ class User extends AbstractUser {
             
         } 
         return $user; // Return user data on success
-        // var_dump($user);
-        // else {
-        //     throw new \Exception("Invalid email or password."); // Password mismatch
-        // }
-    // }
+       
     }
     
     
@@ -144,6 +137,8 @@ class User extends AbstractUser {
             return "User not found or not logged in.";
         }
     }
+
+    
 
     public function findByUsername($username) {
         $query = "SELECT * FROM users WHERE username = :username LIMIT 1";
