@@ -47,6 +47,11 @@ abstract class Course extends Model {
 
     abstract public function getMostEnrolledCourse($teacherId);
 
+    abstract public function addComment($userId, $courseId, $commentText);
+
+    abstract public function getAllComments();
+    
+
 }
 
 

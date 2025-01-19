@@ -90,14 +90,39 @@ class DocumentCourse extends Course {
     }
 
 
+    // public function getCoursesByPage($page, $limit) {
+    //     $offset = ($page - 1) * $limit;
+    //     $stmt = $this->pdo->prepare("SELECT * FROM courses WHERE status = 'accepted' LIMIT :limit OFFSET :offset");
+    //     $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    //     $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    //     $stmt->execute();
+    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // }
+
     public function getCoursesByPage($page, $limit) {
         $offset = ($page - 1) * $limit;
-        $stmt = $this->pdo->prepare("SELECT * FROM courses WHERE status = 'accepted' LIMIT :limit OFFSET :offset");
+    
+        $sql = "SELECT 
+                    courses.id,
+                    courses.title,
+                    courses.meta_description,
+                    courses.video_content,
+                    courses.document_content,
+                    users.username AS teacher_name
+                FROM courses
+                JOIN users ON courses.teacher_id = users.id
+                WHERE courses.status = 'accepted'
+                LIMIT :limit OFFSET :offset";
+    
+        $stmt = $this->pdo->prepare($sql);
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
+    
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
+    
     
     public function countCourses() {
         return $this->count('courses');
@@ -201,5 +226,34 @@ class DocumentCourse extends Course {
         return $result ?: null; // Return result or null if no courses found
     }
 
+
+    // Function to add comment to the comments table
+        public function addComment($userId, $courseId, $commentText) {
+            try {
+                $stmt = $this->pdo->prepare("INSERT INTO comments (user_id, course_id, comment_text) VALUES (:userId, :courseId, :commentText)");
+                $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+                $stmt->bindParam(':courseId', $courseId, PDO::PARAM_INT);
+                $stmt->bindParam(':commentText', $commentText, PDO::PARAM_STR);
+
+                // Execute the query
+                $stmt->execute();
+
+                return true; // Return true if comment is added successfully
+            } catch (PDOException $e) {
+                // Handle exceptions (e.g., connection errors or query issues)
+                return false;
+            }
+        }
+
+        public function getAllComments() {
+            $stmt = $this->pdo->prepare("
+                SELECT comments.comment_text, comments.created_at, users.username
+                FROM comments
+                JOIN users ON comments.user_id = users.id
+            ");
+
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
 
 }

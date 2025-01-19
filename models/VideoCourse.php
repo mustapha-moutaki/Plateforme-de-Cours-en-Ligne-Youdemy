@@ -171,5 +171,32 @@ class VideoCourse extends Course {
         $stmt->execute(['course_id' => $course_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+   
+    public function addComment($userId, $courseId, $commentText) {
+        try {
+            $stmt = $this->pdo->prepare("INSERT INTO comments (user_id, course_id, comment_text) VALUES (:userId, :courseId, :commentText)");
+            $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+            $stmt->bindParam(':courseId', $courseId, PDO::PARAM_INT);
+            $stmt->bindParam(':commentText', $commentText, PDO::PARAM_STR);
+
+            // Execute the query
+            $stmt->execute();
+
+            return true; // Return true if comment is added successfully
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+    public function getAllComments() {
+        $stmt = $this->pdo->prepare("
+            SELECT comments.comment_text, comments.created_at, users.username
+            FROM comments
+            JOIN users ON comments.user_id = users.id
+        ");
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     
 }

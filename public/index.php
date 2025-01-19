@@ -87,7 +87,7 @@ $courses = $courseModel->getCoursesByPage($page, $limit);
 
     <!-- Search & Filters Section -->
     <section class="bg-white p-6 shadow-lg mt-6">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <div-- class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="relative w-full max-w-md">
                 <input type="text" placeholder="Search courses..." class="w-full p-3 pl-12 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600" id="searchInput">
                 <div class="absolute top-0 left-0 mt-3 ml-4">
@@ -98,23 +98,42 @@ $courses = $courseModel->getCoursesByPage($page, $limit);
                 </div>
             </div>
 
-            <div class="flex space-x-6">
-                <div>
-                    <label for="categoryFilter" class="text-lg text-gray-700">Category:</label>
-                    <?php
-$selectedCategory = isset($_GET['category']) ? $_GET['category'] : '';
-$selectedTag = isset($_GET['tag']) ? $_GET['tag'] : '';
-?>
-<select id="categoryFilter" class="bg-gray-100 p-2 rounded-lg shadow-sm">
-    <option value="">All</option>
-    <?php foreach ($getAllCategories as $category): ?>
-        <option value="<?= $category['id'] ?>" <?= $category['id'] == $selectedCategory ? 'selected' : '' ?>>
-            <?= $category['name'] ?>
-        </option>
-    <?php endforeach; ?>
-</select>
+            <!--div class="flex space-x-6">
+                <div-->
+                    <!--label for="categoryFilter" class="text-lg text-gray-700">Category:</!--label>
+                    <!-?php
+                        $selectedCategory = isset($_GET['category']) ? $_GET['category'] : '';
+                        $selectedTag = isset($_GET['tag']) ? $_GET['tag'] : '';
+                        ?>
+                        <select id="categoryFilter" class="bg-gray-100 p-2 rounded-lg shadow-sm">
+                            <option value="">All</option>
+                            <!-?php foreach ($getAllCategories as $category): ?>
+                                <option value="<!_?= $category['id'] ?>" <!-?= $category['id'] == $selectedCategory ? 'selected' : '' ?>>
+                                    <!-?= $category['name'] ?>
+                                </option>
+                            <!-?php endforeach; ?>
+                        </select>
 
-                </div>
+                </div-->
+                <div class="flex space-x-6">
+    <div>
+        <label for="categoryFilter" class="text-lg text-gray-700">Category:</label>
+        <?php
+        // Retrieve selected values for category and tag filters
+        $selectedCategory = isset($_GET['category']) ? $_GET['category'] : '';
+        ?>
+        <select id="categoryFilter" class="bg-gray-100 p-2 rounded-lg shadow-sm">
+            <option value="">All</option>
+            <?php foreach ($getAllCategories as $category): ?>
+                <!-- Mark selected category -->
+                <option value="<?= htmlspecialchars($category['id']) ?>" 
+                        <?= $category['id'] == $selectedCategory ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($category['name']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+</div>
 
                 <div>
                     <label for="tagFilter" class="text-lg text-gray-700">Tags:</label>
@@ -126,7 +145,7 @@ $selectedTag = isset($_GET['tag']) ? $_GET['tag'] : '';
                         <?php endforeach; ?>
                     </select>
                 </div>
-            </div>
+            </!--div>
         </div>
     </section>
 
@@ -142,44 +161,42 @@ $selectedTag = isset($_GET['tag']) ? $_GET['tag'] : '';
 <section class="p-8 bg-gray-100">
     <h2 class="text-3xl font-semibold text-center mb-6 text-indigo-800">Featured Courses</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="courseList">
-        <?php foreach ($courses as $course): ?>
-            <div class="course bg-white shadow-lg rounded-lg overflow-hidden hover:scale-105 transform transition duration-300">
-                <!-- Add course image or video content dynamically -->
-                 
-                <?php if($course['video_content'] != null): ?>
-                    <!-- If video content exists -->
-                    <iframe src="<?= $course['video_content']; ?>" frameborder="0" class="w-full h-48 object-cover"></iframe>
-                <?php elseif($course['document_content'] != null): ?>
-                    <!-- If document content exists (fallback image and document) -->
-                    <img src="https://i.pinimg.com/736x/1b/7b/e2/1b7be209fee3fd17943a981b5508384e.jpg" 
-                         alt="Course Image" 
-                         class="w-full h-48 object-cover">
-                    <p class="mt-2"><?= $course['document_content']; ?></p>
-                <?php endif; ?>
+    <?php foreach ($courses as $course): ?>
+        <div class="course bg-white shadow-lg rounded-lg overflow-hidden hover:scale-105 transform transition duration-300">
+            
+            <!-- Display video or document content -->
+            <?php if (!empty($course['video_content'])): ?>
+                <iframe src="<?= htmlspecialchars($course['video_content']); ?>" frameborder="0" class="w-full h-48 object-cover"></iframe>
+            <?php elseif (!empty($course['document_content'])): ?>
+                <img src="https://i.pinimg.com/736x/1b/7b/e2/1b7be209fee3fd17943a981b5508384e.jpg" 
+                     alt="Course Image" 
+                     class="w-full h-48 object-cover">
+                <p class="mt-2"><?= htmlspecialchars($course['document_content']); ?></p>
+            <?php else: ?>
+                <img src="default-placeholder-image.jpg" alt="Placeholder" class="w-full h-48 object-cover">
+            <?php endif; ?>
 
-                <div class="p-6">
-                    <h3 class="text-2xl font-semibold text-indigo-800"><?= $course['title'] ?></h3>
-                    <p class="text-gray-600 mt-2"><?= $course['meta_description'] ?></p>
-                    <div class="mt-4 flex justify-between items-center">
-                        <!-- <a href="viewcourse.php?course_id=<?= $course['id'] ?>" class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition duration-300 ease-in-out">Learn More</a> -->
-
-                                            <a 
-                        href="<?= $isLoggedIn ? 'course.php?id=' . $course['id'] : 'sign-up.php'; ?>" 
-                        class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition duration-300 ease-in-out">
+            <!-- Course details -->
+            <div class="p-6">
+                <h3 class="text-2xl font-semibold text-indigo-800">
+                    <?= htmlspecialchars($course['title'] ?? 'Untitled Course'); ?>
+                </h3>
+                <p class="text-gray-600 mt-2">
+                    <?= htmlspecialchars($course['meta_description'] ?? 'No description available.'); ?>
+                </p>
+                <p>Instructor: <?= htmlspecialchars($course['teacher_name'] ?? 'Unknown'); ?></p>
+                <div class="mt-4 flex justify-between items-center">
+                    <a href="sign-up.php" 
+                       class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition duration-300 ease-in-out">
                         Learn More
                     </a>
-                    </div>
                 </div>
             </div>
-        <?php endforeach; ?>
-    </div>
+        </div>
+    <?php endforeach; ?>
+</div>
+
 </section>
-
-
-
-
-
-
 
 <div id="paginationControls" class="flex justify-center mt-6 space-x-4">
     <?php if ($totalPages > 1): ?>
@@ -209,7 +226,7 @@ $selectedTag = isset($_GET['tag']) ? $_GET['tag'] : '';
         <p>&copy; 2025 Yudemy. All rights reserved.</p>
     </footer>
 
-    <script>
+    <!-- <script>
         // Function to filter courses based on search input and selected filters
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchInput');
@@ -245,7 +262,31 @@ $selectedTag = isset($_GET['tag']) ? $_GET['tag'] : '';
             categoryFilter.addEventListener('change', filterCourses);
             tagFilter.addEventListener('change', filterCourses);
         });
-    </script>
+    </script> -->
+    <script>
+    // Search filter logic
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+        const courses = document.querySelectorAll('.course');
 
+        // Function to filter courses
+        function filterCourses() {
+            const searchQuery = searchInput.value.toLowerCase(); // Get search input
+            
+            courses.forEach(course => {
+                const title = course.querySelector('h3').textContent.toLowerCase(); // Course title
+                
+                // Check if course matches the search query
+                const matchesSearch = title.includes(searchQuery);
+
+                // Show or hide the course based on the match
+                course.style.display = matchesSearch ? '' : 'none';
+            });
+        }
+
+        // Attach input event listener to search bar
+        searchInput.addEventListener('input', filterCourses);
+    });
+</script>
 </body>
 </html>

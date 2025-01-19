@@ -4,7 +4,7 @@ require_once '../../vendor/autoload.php';
 use Config\Database; 
 use Models\DocumentCourse; 
 use Models\Category; 
-
+session_start();
 $pdo = Database::makeConnection();
 
 
@@ -26,8 +26,11 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['markAsCompleted'])) {
         $courseId = $_POST['course_id'];
         $newStatus = 'complete';
+        $comment = $_POST['comment'];
+        $userId = $_SESSION['user_id'];
 
         if ($courseModel->updateCourseStatus($courseId, $newStatus)) {
+            $courseModel->addComment($userId, $courseId, $comment);
             $completedMessage = "Course marked as completed successfully!";
             $course = $courseModel->getCourseById($courseId); 
         } else {
@@ -37,6 +40,7 @@ try {
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
 }
+
 ?>
 
 
@@ -160,9 +164,30 @@ try {
 
                   
                 </form>
+
               </div>
             </div>
           </div>
+          <div class="comments-section mt-8">
+    <!-- Display Existing Comments -->
+    <h2 class="text-2xl font-semibold text-gray-800">Comments</h2>
+    <div class="comments-list mt-4">
+        <?php
+        // Assuming $comments contains all comments fetched from the database
+        $comments = $courseModel->getAllComments();
+        if (!empty($comments)) {
+            foreach ($comments as $comment) {
+                echo '<div class="comment bg-gray-100 p-4 rounded-lg mb-4">';
+                echo '<p><strong>' . htmlspecialchars($comment['username']) . '</strong> said:</p>';
+                echo '<p class="text-gray-700 mt-2">' . htmlspecialchars($comment['comment_text']) . '</p>';
+                echo '<p class="text-sm text-gray-500 mt-1">Posted on: ' . htmlspecialchars($comment['created_at']) . '</p>';
+                echo '</div>';
+            }
+        } else {
+            echo '<p>No comments yet. Be the first to comment!</p>';
+        }
+        ?>
+    </div>
         </div>
       </div>
     </div>
