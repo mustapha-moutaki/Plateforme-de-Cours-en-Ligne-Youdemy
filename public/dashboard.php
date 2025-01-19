@@ -18,20 +18,12 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
   exit;
 }
 
-// if (isset($_SESSION['username']) && isset($_SESSION['user_id'])) {
     $username = $_SESSION['username'];
     $user_id = $_SESSION['user_id'];
-    
-// }
-//---------------------------
-// <?php if (isset($user['role']) && $user['role'] == 'admin'):?-->
-//------------------------
 $userRole = User::getUserRole($user_id);
 
-// Create an instance of the Category model
 $categoryModel = new Category($pdo);
 $tagModel = new Tag($pdo);
-// $userModel = new user($pdo);
 $courseModel = new VideoCourse($pdo);
 $teacherModel = new Teacher($pdo);
 
@@ -42,9 +34,7 @@ $getAllcategories = $categoryModel->getAllCategories();
 $tagCount = $tagModel->countTags();  
 $teacherCount = $teacherModel->countTeachers();  
 $courseCount = $courseModel->countCourses(); 
-
 $getAllCourses = $courseModel->getAllCoursesAccepted();
-
 $coursemodelv = new DocumentCourse($pdo);
 
 
@@ -57,9 +47,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['joinCourse'])) {
 
   if ($isEnrolled) {
       header("Location: ../views/student/viewCourse.php?course_id=" . $courseId);
-  } else{
-    echo"you have already joined this course !";
-  }
+  }else {
+    echo "
+    <div style='display: flex; justify-content: center; align-items: center; height: 100vh;'>
+        <div style='font-family: Arial, sans-serif; background-color: #ffcc00; border: 1px solid #ffa500; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); text-align: center; max-width: 400px;'>
+            <p style='margin: 0; font-size: 18px;'>You have already joined this course!</p>
+            <br>
+            <p>You can <a href='../views/student/mycourses.php' style='color: #007bff; text-decoration: none; font-weight: bold;'>check all your courses here</a>.</p>
+        </div>
+    </div>
+    ";
+}
   exit;
 }
 // echo $user_id;

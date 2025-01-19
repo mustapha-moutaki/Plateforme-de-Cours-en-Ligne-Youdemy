@@ -77,7 +77,15 @@ use PDO;
             
             return $stmt->fetchAll(PDO::FETCH_ASSOC); // Returns array of tags
         }
+        public function InsertTagsMasse($tags) {
+            // Split tags into an array and remove duplicates
+            $arraytags = array_unique(array_map('trim', explode(',', $tags)));
         
+            // Use the create method to insert each tag
+            foreach ($arraytags as $value) {
+                $this->create('tags', ['name' => $value]);
+            }
+        }
         
     }
 
