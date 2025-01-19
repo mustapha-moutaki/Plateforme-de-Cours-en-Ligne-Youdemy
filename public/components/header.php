@@ -44,14 +44,11 @@ if (isset($_SESSION['username']) && isset($_SESSION['user_id'])) {
             <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Dashboard</li>
           </ol>
         </nav>
-        <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
-          <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-            <div class="input-group input-group-outline">
-              <label class="form-label">Type here...</label>
-              <input type="text" class="form-control">
-            </div>
+    
+         
+
           </div>
-          <ul class="navbar-nav d-flex align-items-center justify-content-end">
+          <ul class="navbar-nav d-flex align-items-center justify-content-end w-30">
     <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
         <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
             <div class="sidenav-toggler-inner">
@@ -71,7 +68,7 @@ if (isset($_SESSION['username']) && isset($_SESSION['user_id'])) {
             <div class="d-flex align-items-center">
             <p class="mb-0 me-2">
             <?php if (isset($username) && $username): ?>
-        <?php echo "hello " . htmlspecialchars($username); ?>
+        <?php echo "Hello " . htmlspecialchars($username); ?>
     <?php endif; ?>
 </p>
 
@@ -92,6 +89,6 @@ if (isset($_SESSION['username']) && isset($_SESSION['user_id'])) {
         </div>
       </div>
     </nav>
-
+  
     </body>
 </html>

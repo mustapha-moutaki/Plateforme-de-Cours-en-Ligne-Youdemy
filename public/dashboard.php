@@ -60,7 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['joinCourse'])) {
 }
   exit;
 }
-// echo $user_id;
 $userModel = new Teacher($pdo);
 $countteacherCourses = $userModel ->  countTeacherCourses($user_id);
 
@@ -69,6 +68,7 @@ $totalstudentIncourse = $userModel -> joinCourses($user_id);
 $teacherId = 3; // Example teacher ID
 $courseData = $coursemodelv->getMostEnrolledCourse($teacherId);
 
+$TopThreeTeachers = $userModel->topThreeTeachers($pdo);
 
 
 ?>
@@ -108,6 +108,7 @@ include_once './components/sidebar.php';
     <!-- End Navbar -->
     <div class="container-fluid py-2">
       <div class="row">
+        
         <div class="ms-3">
           <h3 class="mb-0 h4 font-weight-bolder">Dashboard</h3>
           <p class="mb-4">
@@ -204,6 +205,34 @@ include_once './components/sidebar.php';
   <div class="card-footer p-3"></div>
 </div>
 
+<div class="card">
+            <div class="card-header p-3">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <p class="text-sm mb-0 text-uppercase text-primary font-weight-bold"> top 3 teachers</p>
+                  <?php if (isset($user['role']) && $user['role'] == 'admin' || $user['role'] == 'teacher' || $user['role'] == 'student'): ?>
+                    <?php foreach($TopThreeTeachers as $teachertop): ?>
+
+                      <div class="teacher-info">
+    <span class="teacher-name"><?php echo $teachertop['username']; ?></span>
+    <span class="courses-count"><?php echo '('. $teachertop['total_courses'].')'; ?></span>
+</div>
+
+                  <?php endforeach; ?>
+                  <?php endif; ?>
+                 
+                </div>
+                <div class="icon icon-md icon-shape bg-gradient-primary text-white shadow text-center rounded-circle">
+                <i class="material-symbols-rounded" style="color: white;">star</i>
+                </div>
+              </div>
+            </div>
+
+            <hr class="horizontal my-0 bg-primary">
+            <div class="card-footer p-3">
+             
+            </div>
+          </div>
           
         </div>
       </div>
@@ -219,13 +248,6 @@ include_once './components/sidebar.php';
       </select>
     </div>
 
-    <!-- Courses Cards -->
-     <!-- check user role here for the admin -->
-   
-
-
-
-    <!--for the teacher  -->
       <!-- Courses Cards -->
       <div class="row" id="coursesContainer">
     <?php foreach($getAllCourses as $course): ?>
@@ -611,6 +633,7 @@ include_once './components/sidebar.php';
         }
       });
     }
+
   </script>
 </body>
 

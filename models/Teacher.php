@@ -54,6 +54,25 @@ use PDO;
             return $stmt->fetchAll(PDO::FETCH_ASSOC);  // Return results as an associative array
         }
         
+
+        public function topThreeTeachers() {
+            $pdo = Database::makeConnection();
+            $sql = "
+                SELECT u.username, c.teacher_id, COUNT(*) AS total_courses
+                FROM courses c
+                INNER JOIN users u ON u.id = c.teacher_id
+                GROUP BY c.teacher_id, u.username
+                ORDER BY total_courses DESC
+                LIMIT 3
+            ";
+        
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+        
+
+        
         
 
     }
