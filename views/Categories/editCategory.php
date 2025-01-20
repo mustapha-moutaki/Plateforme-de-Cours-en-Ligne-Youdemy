@@ -4,7 +4,8 @@ require_once '../../vendor/autoload.php';
 use Config\Database;
 use Models\Admin;
 use Models\category;
-
+session_start();
+$userId = $_SESSION['user_id'];
 $pdo = Database::makeconnection();
 $categoryModel = new category($pdo);
 

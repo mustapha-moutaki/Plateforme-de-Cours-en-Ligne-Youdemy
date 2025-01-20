@@ -4,6 +4,8 @@ require_once '../../vendor/autoload.php';
 use Config\Database;
 use Models\Admin;
 use Models\Tag;
+session_start();
+$userId = $_SESSION['user_id'];
 
 $pdo = Database::makeconnection();
 $tagModel = new Tag($pdo);

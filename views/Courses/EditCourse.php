@@ -9,28 +9,14 @@ use Models\Tag;
 use Models\Course;
 use Models\VideoCourse;
 use Models\DocumentCourse;
-
 $pdo = Database::makeConnection();
 
 $categoryModel = new Category($pdo);
 $categories = $categoryModel->getAllCategories();
-
 $tagModel = new Tag($pdo);
 $tags = $tagModel->getAllTags();
-
 $courseModel = new VideoCourse($pdo);
 
-// Check if course ID is provided
-if (!isset($_GET['edit_id'])) {
-    die("Course ID is required.");
-}
-
-$courseId = $_GET['edit_id'];
-$course = $courseModel->getCourseById($courseId);
-// echo $course;
-if (!$course) {
-    die("Course not found.");
-}
 
 if (isset($_POST['edit_course'])) {
     try {
@@ -68,6 +54,25 @@ if (isset($_POST['edit_course'])) {
     }
 }
 ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -108,7 +113,8 @@ if (isset($_POST['edit_course'])) {
                                 </div>
 
                                 <!-- Content Type -->
-                                 <?php $course['docuemnt_cotent'] ?>
+                                <?php $course['document_content'] ?>
+
                                 <div class="mb-3">
                                     <label for="content_type" class="form-label fw-semibold">Content Type</label>
                                     <select name="content_type" id="contentType" class="form-select" required>

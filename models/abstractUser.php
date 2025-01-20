@@ -42,24 +42,6 @@ abstract class AbstractUser {
     // Method to validate the user login credentials
     abstract public function login($email, $password);
 
-    
-
-    // public function login($email, $password): bool {
-    //     $query = "SELECT * FROM " . $this->table . " WHERE email = :email LIMIT 1";
-    //     $stmt = $this->pdo->prepare($query);
-    //     $stmt->execute([":email" => $email]);
-
-    //     if ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-    //         if (password_verify($password, $row['password'])) {
-    //             $this->id = $row['id'];
-    //             $this->name = $row['name'];
-    //             $this->email = $row['email'];
-    //             $this->role = $row['role'];
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
 }
 
 

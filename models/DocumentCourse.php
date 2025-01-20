@@ -89,16 +89,6 @@ class DocumentCourse extends Course {
         return $stmt->execute();
     }
 
-
-    // public function getCoursesByPage($page, $limit) {
-    //     $offset = ($page - 1) * $limit;
-    //     $stmt = $this->pdo->prepare("SELECT * FROM courses WHERE status = 'accepted' LIMIT :limit OFFSET :offset");
-    //     $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-    //     $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-    //     $stmt->execute();
-    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // }
-
     public function getCoursesByPage($page, $limit) {
         $offset = ($page - 1) * $limit;
     
@@ -122,13 +112,9 @@ class DocumentCourse extends Course {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
-    
-    
     public function countCourses() {
         return $this->count('courses');
     }
-
-
 
     public function updateStatus($courseId, $status) {
         
@@ -141,26 +127,6 @@ class DocumentCourse extends Course {
         return $stmt->execute();
     }
     
-    // public function enrollCourse($userId, $courseId) {
-    //     $pdo = Database::makeconnection();
-    //     $sql = "INSERT INTO course_enrollment (user_id, course_id) VALUES (:user_id, :course_id)";
-    //     $stmt = $pdo->prepare($sql);
-    //     $stmt->bindParam(':user_id', $userId);
-    //     $stmt->bindParam(':course_id', $courseId);
-    //     $stmt->execute();
-    // }
-    // public function enrollCourse($userId, $courseId) {
-    //     $sql = "INSERT INTO course_enrollments (user_id, course_id) VALUES (:user_id, :course_id)";
-    //     $stmt = $this->pdo->prepare($sql);
-        
-    //     // Bind parameters
-    //     $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
-    //     $stmt->bindParam(':course_id', $courseId, PDO::PARAM_INT);
-        
-    //     // Execute the statement and return the result
-    //     return $stmt->execute();
-    // }
-
     public function enrollCourse($userId, $courseId) {
         try {
             $checkSql = "SELECT COUNT(*) FROM course_enrollments WHERE user_id = :user_id AND course_id = :course_id";
@@ -200,30 +166,30 @@ class DocumentCourse extends Course {
     }
 
     public function getTagsByCourseId($course_id){
-    $sql = "SELECT t.id, t.name 
-            FROM tags t 
-            JOIN course_tag ct ON ct.tag_id = t.id 
-            WHERE ct.course_id = :course_id";
+        $sql = "SELECT t.id, t.name 
+                FROM tags t 
+                JOIN course_tag ct ON ct.tag_id = t.id 
+                WHERE ct.course_id = :course_id";
+    
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['course_id' => $course_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
 
-    $stmt = $this->pdo->prepare($sql);
-    $stmt->execute(['course_id' => $course_id]);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
-    public function getMostEnrolledCourse($teacherId):array {
-        // $pdo = Database::makeConnection();
+   
+    
+    public function getTopThreeEnrolledCourses(): array {
         $sql = "SELECT courses.title AS course_title, COUNT(course_enrollments.user_id) AS total_students
                 FROM course_enrollments
                 JOIN courses ON course_enrollments.course_id = courses.id
-                WHERE courses.teacher_id = :teacherId
                 GROUP BY courses.id
                 ORDER BY total_students DESC
-                LIMIT 1";
+                LIMIT 3";
+        
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindParam(':teacherId', $teacherId, PDO::PARAM_INT); // Bind teacherId
         $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch the single result
-        return $result ?: null; // Return result or null if no courses found
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC); 
+        return $results ?: []; 
     }
 
 

@@ -9,27 +9,22 @@ use Models\Tag;
 use Models\Course;
 use Models\VideoCourse;
 use Models\DocumentCourse;
-
+session_start();
+$userId = $_SESSION['user_id'];
 $pdo = Database::makeConnection();
-
 $categoryModel = new Category($pdo);
 $categories = $categoryModel->getAllCategories();
-
 $tagModel = new Tag($pdo);
 $tags = $tagModel->getAllTags();
-
 $courseModel = new VideoCourse($pdo);
 
 // Check if course ID is provided
 if (!isset($_GET['edit_id'])) {
     die("Course ID is required.");
 }
-
 $courseId = $_GET['edit_id'];
 $course = $courseModel->getCourseById($courseId);
-// echo $course;
 $tagsName = $tagModel->getAllTagsName();
-
 
 if (!$course) {
     die("Course not found.");
@@ -37,6 +32,7 @@ if (!$course) {
 
 if (isset($_POST['edit_course'])) {
     try {
+        // if the all infos are exist transaction begin if not don't make changes
         $pdo->beginTransaction();
 
         $title = $_POST['title'];
@@ -54,6 +50,7 @@ if (isset($_POST['edit_course'])) {
         }
 
         $courseModel->updateCourse($courseId, $title, $content, $meta_description, $category_id);
+        echo"added cessufullyyyyyy";
 
         // $courseModel->clearCourseTags($courseId);
         if (!empty($tags)) {
@@ -71,6 +68,24 @@ if (isset($_POST['edit_course'])) {
     }
 }
 ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -111,7 +126,7 @@ if (isset($_POST['edit_course'])) {
                                 </div>
 
                                 <!-- Content Type -->
-                                 <?php $course['docuemnt_cotent'] ?>
+                                 <?php $course['document_content'] ?>
                                 <div class="mb-3">
                                     <label for="content_type" class="form-label fw-semibold">Content Type</label>
                                     <select name="content_type" id="contentType" class="form-select" required>
@@ -177,7 +192,7 @@ if (isset($_POST['edit_course'])) {
             </div>
         </div>
 
-        <?php include_once '../../public/components/footer.php'; ?>
+    <?php include_once '../../public/components/footer.php'; ?>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

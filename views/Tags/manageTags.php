@@ -2,7 +2,8 @@
 require_once '../../vendor/autoload.php';
 use Config\Database; 
 use Models\Tag;  
-
+session_start();
+$userId = $_SESSION['user_id'];
 // Get the connection instance
 $pdo = Database::makeConnection();  // Ensure the connection is successful
 

@@ -15,19 +15,6 @@ class Admin extends User {
         return $stmt->execute();
     }
 
-    // Method to delete an article (any article)
-    public function deleteArticle($articleId) {
-        $stmt = $this->pdo->prepare("DELETE FROM articles WHERE id = :id");
-        $stmt->bindParam(':id', $articleId, PDO::PARAM_INT);
-        return $stmt->execute();
-    }
-
-    // Method to accept an article (approve an author article)
-    public function acceptArticle($articleId) {
-        $stmt = $this->pdo->prepare("UPDATE articles SET status = 'approved' WHERE id = :id");
-        $stmt->bindParam(':id', $articleId, PDO::PARAM_INT);
-        return $stmt->execute();
-    }
 
     // Get tag by ID
     public function getTagById($id) {
@@ -45,11 +32,6 @@ class Admin extends User {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Get all authors
-    public function getAllAuthors() {
-        $stmt = $this->pdo->query("SELECT author_id, name FROM authors");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
     
 }
 ?>

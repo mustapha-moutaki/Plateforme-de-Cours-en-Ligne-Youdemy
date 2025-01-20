@@ -23,6 +23,9 @@ try {
         throw new Exception("Course ID is missing.");
     }
 
+
+
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['markAsCompleted'])) {
         $courseId = $_POST['course_id'];
         $newStatus = 'complete';
@@ -149,7 +152,7 @@ try {
                   <textarea name="comment" rows="4" class="form-control" placeholder="Write your comment here..." required></textarea>
                   <input type="hidden" name="course_id" value="<?php echo $courseId; ?>">
                   <div class="d-flex justify-content-between align-items-center ">
-                    <button type="submit" class="btn btn-primary mt-2 me-2">Submit</button>
+                    <!-- <button type="submit" class="btn btn-primary mt-2 me-2">Submit</button> -->
                     <button type="submit" name="markAsCompleted" class="btn btn-secondary mt-2">Mark as Completed</button>
 
 

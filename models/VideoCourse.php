@@ -49,7 +49,7 @@ class VideoCourse extends Course {
         return $this->update($this->table, [
             'title' => $title,
             'meta_description' => $meta_description,
-            'name' => $category
+            'category_id' => $category
         ], 'id', $id);
     }
 
@@ -105,20 +105,33 @@ class VideoCourse extends Course {
         return $stmt->execute();
     }
     
-    public function getMostEnrolledCourse($teacherId):array {
-        $pdo = Database::makeConnection();
+
+    // public function getMostEnrolledCourse(): array {
+    //     $sql = "SELECT courses.title AS course_title, COUNT(course_enrollments.user_id) AS total_students
+    //             FROM course_enrollments
+    //             JOIN courses ON course_enrollments.course_id = courses.id
+    //             GROUP BY courses.id
+    //             ORDER BY total_students DESC
+    //             LIMIT 1";
+        
+    //     $stmt = $this->pdo->prepare($sql);
+    //     $stmt->execute();
+    //     $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    //     return $result ?: null;// if there is no sourse
+    // }
+
+    public function getTopThreeEnrolledCourses(): array {
         $sql = "SELECT courses.title AS course_title, COUNT(course_enrollments.user_id) AS total_students
                 FROM course_enrollments
                 JOIN courses ON course_enrollments.course_id = courses.id
-                WHERE courses.teacher_id = :teacherId
                 GROUP BY courses.id
                 ORDER BY total_students DESC
-                LIMIT 1";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(':teacherId', $teacherId, PDO::PARAM_INT); // Bind teacherId
+                LIMIT 3";
+        
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch the single result
-        return $result ?: null; // Return result or null if no courses found
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $results ?: []; 
     }
 
     public function enrollCourse($userId, $courseId) {
@@ -198,5 +211,7 @@ class VideoCourse extends Course {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+
     
 }

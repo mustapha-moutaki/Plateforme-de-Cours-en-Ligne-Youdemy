@@ -6,7 +6,8 @@ use Models\VideoCourse;
 use Models\DocumentCourse; 
 use Models\Tag; 
 use Models\Category; 
-
+session_start();
+$userId = $_SESSION['user_id'];
 // Get the connection instance
 $pdo = Database::makeConnection();  // Ensure the connection is successful
 
@@ -24,11 +25,7 @@ try {
 $getAllCourses = $courseModel->getAllCourses();
 $getAllTagsName =$tagModel->getAllTagsName();
 $AllCategoriesName =$categoryModel->getAllCategoriesName();
-//new additons
-// $getallcoursesofteacher = $courseModel ->getCourseById();
 
-
-// If there's a delete request, process it
 if (isset($_GET['delete_id'])) {
     $deleteId = $_GET['delete_id'];
     if ($courseModel->deleteCourse($deleteId)) {
@@ -46,8 +43,32 @@ if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['update_course_status'])){
     header("Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/courses/manageCourses.php");
 }
 }
-
 ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -93,70 +114,86 @@ if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['update_course_status'])){
     <!-- <a href="addCourse.php"><button class="btn btn-primary mb-4">Add Course</button></a> -->
   
     <!-- Courses Table -->
-    <table class="table table-bordered table-hover">
-      <thead class="table-dark">
-        <tr>
-          <th scope="col">Course ID</th>
-          <th scope="col">Title</th>
-          <th scope="col">Description</th>
-          <th scope="col">Category</th>
-          <th scope="col">Tags</th>
-          <th scope="col">Action</th>
-          <th scope="col">Status</th>
-        </tr>
-      </thead>
-      <tbody id="courseTableBody">
-      <?php foreach($getAllCourses as $course): ?>
+    <table class="table table-sm table-bordered table-hover text-center align-middle">
+  <thead class="table-dark">
     <tr>
-        <td><?php echo $course['id'] ?></td>
-        <td><?php echo $course['title'] ?></td>
-        <td><?php echo $course['meta_description'] ?></td>    
-    <td>
-            <?php 
-                $categoryName = ''; 
-               
-                foreach ($AllCategoriesName as $category) {
-                
-                    if ($category['id'] == $course['category_id']) {
-                        $categoryName = $category['categoryname']; 
-                        break; 
-                    }
-                }
-                echo $categoryName; 
-            ?>
-        </td>
-
-       <td>
-        <?php foreach($getAllTagsName as $tag): ?>
-           <?php echo $tag['tags'] ?>
-        <?php endforeach; ?>
-        
-        </td>
-
-        <td>
-        <button class="btn btn-sm btn-danger"><a href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/courses/manageCourses.php?delete_id=<?php echo $course['id']; ?>" onclick="return confirm('Are you sure you want to delete this course?')">Delete</a></button>
-        </td> 
-           <td>
-                        <form action="" method="POST">
-                        <input type="hidden" name="course_id" value="<?= $course['id']; ?>">
-                      <select class="form-select form-select-sm" name="status">
-                  <option value="refused" <?php echo ($course['status'] === 'refused') ? 'selected' : ''; ?>>refused</option>
-                  <option value="accepted" <?php echo ($course['status'] === 'accepted') ? 'selected' : ''; ?>>accepted</option>
-                  <option value="pending" <?php echo ($course['status'] === 'pending') ? 'selected' : ''; ?>>Pending</option>
-                    </select>
-                    <button type="submit" name="update_course_status" class="btn btn-primary px-4 py-1 mt-2">
-                      Save
-                    </button>
-                  </form>
-                  </td>
+      <th scope="col">Title</th>
+      <th scope="col">Description</th>
+      <th scope="col">Category</th>
+      <th scope="col">Created At</th>
+      <th scope="col">Tags</th>
+      <th scope="col">Action</th>
+      <th scope="col">Status</th>
     </tr>
+  </thead>
+  <tbody id="courseTableBody">
+    <?php foreach ($getAllCourses as $course): ?>
+    <tr>
+      <!-- Title -->
+      <td class="text-truncate" style="max-width: 150px;"><?php echo $course['title']; ?></td>
 
+      <!-- Description -->
+      <td class="text-truncate" style="max-width: 200px;"><?php echo $course['meta_description']; ?></td>
 
-<?php endforeach; ?>
+      <!-- Category -->
+      <td>
+        <?php 
+          $categoryName = ''; 
+          foreach ($AllCategoriesName as $category) {
+              if ($category['id'] == $course['category_id']) {
+                  $categoryName = $category['categoryname']; 
+                  break; 
+              }
+          }
+          echo $categoryName; 
+        ?>
+      </td>
 
+      <!-- Created At -->
+      <?php 
+        $date = new DateTime($course['created_at']);
+        $formattedDate = $date->format('Y-m');
+      ?>
+      <td><?php echo $formattedDate; ?></td>
 
-      </tbody>
-    </table>
+      <!-- Tags -->
+      <td>
+        <?php 
+          $tags = $tagModel->getTagsByCourseId($course['id']);
+          foreach ($tags as $tag) {
+              echo "<span class='badge bg-warning text-dark me-1'>{$tag['tagname']}</span>";
+          }
+        ?>
+      </td>
+
+      <!-- Actions -->
+      <td>
+        <button class="btn btn-danger btn-sm">
+          <a href="http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/courses/manageCourses.php?delete_id=<?php echo $course['id']; ?>" class="text-white text-decoration-none" onclick="return confirm('Are you sure you want to delete this course?')">
+            Delete
+          </a>
+        </button>
+      </td>
+
+      <!-- Status -->
+      <td>
+        <form action="" method="POST" class="d-inline">
+          <input type="hidden" name="course_id" value="<?= $course['id']; ?>">
+          <select class="form-select form-select-sm" name="status">
+            <option value="refused" <?php echo ($course['status'] === 'refused') ? 'selected' : ''; ?>>Refused</option>
+            <option value="accepted" <?php echo ($course['status'] === 'accepted') ? 'selected' : ''; ?>>Accepted</option>
+            <option value="pending" <?php echo ($course['status'] === 'pending') ? 'selected' : ''; ?>>Pending</option>
+          </select>
+          <button type="submit" name="update_course_status" class="btn btn-primary btn-sm mt-2">
+            Save
+          </button>
+        </form>
+      </td>
+    </tr>
+    <?php endforeach; ?>
+  </tbody>
+</table>
+
   </div>
 
 <?php

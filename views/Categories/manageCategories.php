@@ -2,7 +2,8 @@
 require_once '../../vendor/autoload.php';
 use Config\Database;  
 use Models\Category; 
-
+session_start();
+$userId = $_SESSION['user_id'];
 $pdo = Database::makeConnection();  
 
 try {

@@ -65,8 +65,9 @@ $countteacherCourses = $userModel ->  countTeacherCourses($user_id);
 
 $totalstudentIncourse = $userModel -> joinCourses($user_id);
 
-$teacherId = 3; // Example teacher ID
-$courseData = $coursemodelv->getMostEnrolledCourse($teacherId);
+$teacherId = 4; // Example teacher ID
+// $courseData = $coursemodelv->getMostEnrolledCourse();
+$courseData = $coursemodelv->getTopThreeEnrolledCourses();
 
 $TopThreeTeachers = $userModel->topThreeTeachers($pdo);
 
@@ -115,17 +116,19 @@ include_once './components/sidebar.php';
             Check the courses, Teachers and Students.
           </p>
         </div>
+
+
+      
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
           <div class="card">
             <div class="card-header p-3">
               <div class="d-flex justify-content-between">
-                <div>
+              <div>
                   <p class="text-sm mb-0 text-uppercase text-primary font-weight-bold">Total Number of Courses</p>
-                  <?php if (isset($user['role']) && $user['role'] == 'admin'): ?>
-                  <h4 class="mb-0 text-dark"><?php echo $courseCount; ?></h4>
-                  <?php endif; ?>
-                 
-                </div>
+                    <?php if (isset($user['role']) && $user['role'] == 'admin'): ?>
+                      <h4 class="mb-0 text-dark"><?php echo htmlspecialchars($courseCount); ?></h4>
+                 <?php endif; ?>
+              </div>
                 <div class="icon icon-md icon-shape bg-gradient-primary text-white shadow text-center rounded-circle">
                   <i class="material-symbols-rounded">menu_book</i>
                 </div>
@@ -139,6 +142,8 @@ include_once './components/sidebar.php';
           </div>
           
         </div>
+ 
+
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
           <div class="card">
             <div class="card-header p-3">
@@ -181,7 +186,7 @@ include_once './components/sidebar.php';
           
         </div>
         <div class="col-xl-3 col-sm-6">
-        <div class="card">
+        <div class="card mb-2">
   <div class="card-header p-3">
     <div class="d-flex justify-content-between">
       <?php if (isset($user['role']) && $user['role'] == 'admin'): ?>
@@ -191,10 +196,13 @@ include_once './components/sidebar.php';
         </div>
       <?php elseif (isset($user['role']) && ($user['role'] == 'student' || $user['role'] == 'teacher')): ?>
         <div>
-          <p class="text-sm mb-0 text-uppercase text-success">Top course</p>
-          <h4 class="mb-0 text-dark text-md"><?php echo 'top course: '. $courseData['course_title']; ?></h4>
-          <h4 class="mb-0 text-dark text-md"><?php echo 'student join: '.$courseData['total_students']; ?></h4>
+            <p class="text-sm mb-0 text-uppercase text-success">Top Courses</p>
+            <?php foreach ($courseData as $course): ?>
+                <h4 class="mb-0 text-dark text-md"><?php echo 'Top Course: ' . htmlspecialchars($course['course_title']); ?></h4>
+                <h4 class="mb-0 text-dark text-md"><?php echo 'Students Joined: ' . htmlspecialchars($course['total_students']); ?></h4>
+            <?php endforeach; ?>
         </div>
+
       <?php endif; ?>
       <div class="icon icon-md icon-shape bg-gradient-success text-white shadow text-center rounded-circle">
         <i class="material-symbols-rounded">school</i>
@@ -205,23 +213,26 @@ include_once './components/sidebar.php';
   <div class="card-footer p-3"></div>
 </div>
 
-<div class="card">
-            <div class="card-header p-3">
-              <div class="d-flex justify-content-between">
-                <div>
-                  <p class="text-sm mb-0 text-uppercase text-primary font-weight-bold"> top 3 teachers</p>
-                  <?php if (isset($user['role']) && $user['role'] == 'admin' || $user['role'] == 'teacher' || $user['role'] == 'student'): ?>
-                    <?php foreach($TopThreeTeachers as $teachertop): ?>
+            <div class="card">
+                        <div class="card-header p-3">
+                          <div class="d-flex justify-content-between">
+                            <div>
+                              <p class="text-sm mb-0 text-uppercase text-primary font-weight-bold"> top 3 teachers</p>
+                              <?php if (isset($user['role']) && $user['role'] == 'admin' || $user['role'] == 'teacher' || $user['role'] == 'student'): ?>
+                                <?php foreach($TopThreeTeachers as $teachertop): ?>
 
-                      <div class="teacher-info">
-    <span class="teacher-name"><?php echo $teachertop['username']; ?></span>
-    <span class="courses-count"><?php echo '('. $teachertop['total_courses'].')'; ?></span>
-</div>
+                                  <div class="teacher-info">
+                <span class="teacher-name"><?php echo $teachertop['username']; ?></span>
+                <span class="courses-count"><?php echo '('. $teachertop['total_courses'].'courses'.')'; ?></span>
+            </div>
 
                   <?php endforeach; ?>
                   <?php endif; ?>
                  
                 </div>
+
+
+                
                 <div class="icon icon-md icon-shape bg-gradient-primary text-white shadow text-center rounded-circle">
                 <i class="material-symbols-rounded" style="color: white;">star</i>
                 </div>
@@ -255,13 +266,16 @@ include_once './components/sidebar.php';
         <div class="card shadow-sm">
             <div class="card-body">
                 <?php if($course['video_content'] != null): ?>
-                    <!-- If video content exists -->
-                    <iframe src="<?= $course['video_content']; ?>" frameborder="0" class="w-full h-48 object-cover"></iframe>
+                      <div class="relative">
+            <iframe src="<?= $course['video_content']; ?>" frameborder="0" class="h-48 object-cover" style="width:100%"></iframe>
+            <div class="absolute inset-0 bg-black opacity-50" style="height: 100% !important; width: 100% !important;"></div>
+            <div class="mydiv h-48" style="width:100%; height:19rem; background-color:white; position:absolute;top:0;opacity: 0;"></div>
+                </div>
                 <?php elseif($course['document_content'] != null): ?>
                     <!-- If document content exists (fallback image and document) -->
                     <img src="https://i.pinimg.com/736x/1b/7b/e2/1b7be209fee3fd17943a981b5508384e.jpg" 
                          alt="Course Image" 
-                         class="w-full h-48 object-cover">
+                         class="w-full h-48 object-cover" style="width:20rem !important;height:9rem">
                     <p class="mt-2"><?= $course['document_content']; ?></p>
                 <?php endif; ?>
                 <h5 class="card-title"><?php echo $course['title'] ?></h5>
@@ -277,6 +291,8 @@ include_once './components/sidebar.php';
                 <!-- Button to redirect to course view page and enroll the user -->
              
             </div>
+
+            
         </div>
     </div>
     <?php endforeach; ?>

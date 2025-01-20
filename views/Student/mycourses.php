@@ -25,14 +25,6 @@ $getAllCoursesOfStudent = $courseModel->getCoursesById($userId); // Adjust this 
 $completeStudentCourses = [];
 $incompleteStuedntCourses = [];
 
-// foreach ($getAllCourses as $course) {
-//     if ($course['status'] === 'completed') {
-//         $completedCourses[] = $course;
-//     } else {
-//         $incompleteCourses[] = $course;
-//     }
-// }
-
 foreach($getAllCoursesOfStudent as $StudentCourse){
     if($StudentCourse['course_status']=='complete'){
         $completeStudentCourses[] = $StudentCourse;
@@ -105,18 +97,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['completeCourse'])) {
                 <table class="table align-items-left mb-0">
                   <thead>
                     <tr>
-                      <th>ID</th>
-                      <th>Name</th>
+                      <!-- <th>ID</th> -->
+                      <th>title</th>
                       <th>description</th>
+                      <th>date</th>
                       <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     <?php foreach($incompleteStuedntCourses as $course): ?>
                     <tr>
-                      <td><?php echo $course['id']; ?></td>
-                      <td><?php echo $course['title']; ?></td>
+                      <!-- <!-td><!-?php echo $course['id']; ?></td> -->
+                      <td><?php echo $course['title']; ?></!-td>
                       <td><?php echo $course['meta_description']; ?></td>
+                      <td><?php $date = new DateTime($course['created_at']); echo $date->format('Y-m');?>
+                    </td>
                       <td>
                       <form method="POST">
                 <input type="hidden" name="course_id" value="<?php echo $course['id']; ?>">
@@ -136,18 +131,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['completeCourse'])) {
                 <table class="table align-items-center mb-0">
                   <thead>
                     <tr>
-                      <th>ID</th>
-                      <th>Name</th>
+                      <th>title</th>
                       <th>description</th>
+                      <th>date</th>
                       <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     <?php foreach($completeStudentCourses as $course): ?>
                     <tr>
-                      <td><?php echo $course['id']; ?></td>
+                     
                       <td><?php echo $course['title']; ?></td>
                       <td><?php echo $course['meta_description']; ?></td>
+                      <td><?php $date = new DateTime($course['created_at']); echo $date->format('Y-m'); // Outputs: YYYY-MM?>
                       <td>
                        
                         <button class="btn btn-success"><a href="editCourse.php?id=<?php echo $course['id']; ?>">certificat</a></button>

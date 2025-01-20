@@ -86,18 +86,22 @@ if (isset($_GET['delete_id'])) {
                 <table class="table align-items-left mb-0">
                   <thead>
                     <tr>
-                      <th>ID</th>
-                      <th>Name</th>
+                      
+                      <th>title</th>
                       <th>description</th>
+                      <!-- new modification -->
+                      <th>status</th>
+                      <!-- new modification -->
                       <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     <?php foreach($getAllCourses as $course): ?>
                     <tr>
-                      <td><?php echo $course['id']; ?></td>
+                      
                       <td><?php echo $course['title']; ?></td>
                       <td><?php echo $course['meta_description']; ?></td>
+                      <td><?php echo $course['status']; ?></td>
                       <td>
                       <form method="POST">
                 <input type="hidden" name="course_id" value="<?php echo $course['id']; ?>">

@@ -35,18 +35,6 @@ $getAllTags = $tagModel->getAllTags();
 $getAllCourses = $courseModel->getAllCourses();
 $totalCourses = $courseModel->getAllCourses();
 
-// Set the number of courses per page
-// $limit = 5;
-
-// $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-
-// // Calculate the total number of pages
-// $totalPages = ceil($courseCount / $limit);
-
-// // Fetch the courses for the current page
-// $courses = $courseModel->getCoursesByPage($page, $limit);
-
-
 $limit = 6;
 
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -98,42 +86,25 @@ $courses = $courseModel->getCoursesByPage($page, $limit);
                 </div>
             </div>
 
-            <!--div class="flex space-x-6">
-                <div-->
-                    <!--label for="categoryFilter" class="text-lg text-gray-700">Category:</!--label>
-                    <!-?php
-                        $selectedCategory = isset($_GET['category']) ? $_GET['category'] : '';
-                        $selectedTag = isset($_GET['tag']) ? $_GET['tag'] : '';
-                        ?>
-                        <select id="categoryFilter" class="bg-gray-100 p-2 rounded-lg shadow-sm">
-                            <option value="">All</option>
-                            <!-?php foreach ($getAllCategories as $category): ?>
-                                <option value="<!_?= $category['id'] ?>" <!-?= $category['id'] == $selectedCategory ? 'selected' : '' ?>>
-                                    <!-?= $category['name'] ?>
-                                </option>
-                            <!-?php endforeach; ?>
-                        </select>
-
-                </div-->
-                <div class="flex space-x-6">
-    <div>
-        <label for="categoryFilter" class="text-lg text-gray-700">Category:</label>
-        <?php
-        // Retrieve selected values for category and tag filters
-        $selectedCategory = isset($_GET['category']) ? $_GET['category'] : '';
-        ?>
-        <select id="categoryFilter" class="bg-gray-100 p-2 rounded-lg shadow-sm">
-            <option value="">All</option>
-            <?php foreach ($getAllCategories as $category): ?>
-                <!-- Mark selected category -->
-                <option value="<?= htmlspecialchars($category['id']) ?>" 
-                        <?= $category['id'] == $selectedCategory ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($category['name']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </div>
-</div>
+            <div class="flex space-x-6">
+                <div>
+                    <label for="categoryFilter" class="text-lg text-gray-700">Category:</label>
+                    <?php
+                    // Retrieve selected values for category and tag filters
+                    $selectedCategory = isset($_GET['category']) ? $_GET['category'] : '';
+                    ?>
+                    <select id="categoryFilter" class="bg-gray-100 p-2 rounded-lg shadow-sm">
+                        <option value="">All</option>
+                        <?php foreach ($getAllCategories as $category): ?>
+                            <!-- Mark selected category -->
+                            <option value="<?= htmlspecialchars($category['id']) ?>" 
+                                    <?= $category['id'] == $selectedCategory ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($category['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
 
                 <div>
                     <label for="tagFilter" class="text-lg text-gray-700">Tags:</label>
@@ -167,6 +138,7 @@ $courses = $courseModel->getCoursesByPage($page, $limit);
             <!-- Display video or document content -->
             <?php if (!empty($course['video_content'])): ?>
                 <iframe src="<?= htmlspecialchars($course['video_content']); ?>" frameborder="0" class="w-full h-48 object-cover"></iframe>
+                <div class="absolute inset-0 bg-black opacity-0" style="height:50%;"></div>
             <?php elseif (!empty($course['document_content'])): ?>
                 <img src="https://i.pinimg.com/736x/1b/7b/e2/1b7be209fee3fd17943a981b5508384e.jpg" 
                      alt="Course Image" 
@@ -200,17 +172,14 @@ $courses = $courseModel->getCoursesByPage($page, $limit);
 
 <div id="paginationControls" class="flex justify-center mt-6 space-x-4">
     <?php if ($totalPages > 1): ?>
-        <!-- Previous Page Link -->
         <?php if ($page > 1): ?>
             <a href="?page=<?= $page - 1 ?>" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Previous</a>
         <?php endif; ?>
 
-        <!-- Page Numbers -->
         <?php for ($i = 1; $i <= $totalPages; $i++): ?>
             <a href="?page=<?= $i ?>" class="<?= $i == $page ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600' ?> px-4 py-2 rounded-md hover:bg-indigo-700 hover:text-white"><?= $i ?></a>
         <?php endfor; ?>
 
-        <!-- Next Page Link -->
         <?php if ($page < $totalPages): ?>
             <a href="?page=<?= $page + 1 ?>" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Next</a>
         <?php endif; ?>
