@@ -222,4 +222,13 @@ class DocumentCourse extends Course {
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
+        public function deleteCourseTags($courseId){
+            $stmt = $this->pdo->prepare("DELETE FROM course_tags WHERE course_id = :courseId");
+            $stmt->bindParam(':courseId', $courseId, PDO::PARAM_INT);
+            $stmt->execute();
+        }
+        
+        
+        
+
 }

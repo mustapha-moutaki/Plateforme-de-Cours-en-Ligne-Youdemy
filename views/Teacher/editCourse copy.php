@@ -32,27 +32,15 @@ if (!$course) {
 
 if (isset($_POST['edit_course'])) {
     try {
-        echo"hello world";
-        // Start a transaction
+        // if the all infos are exist transaction begin if not don't make changes
         $pdo->beginTransaction();
 
-        // Delete the existing course and associated tags
-        $courseId = $_POST['course_id']; // Get the course ID from the URL
-
-        // Delete the tags associated with the course
-        $courseModel->deleteCourseTags($courseId);
-
-        // Delete the course
-        $courseModel->deleteCourse($courseId);
-
-        // Now insert the new data (same as if it's a new course)
         $title = $_POST['title'];
         $meta_description = $_POST['meta_description'];
         $category_id = $_POST['category'];
         $tags = $_POST['tags'] ?? [];
         $content_type = $_POST['content_type'];
 
-        // Determine content based on selected type
         if ($content_type === 'video') {
             $content = convertToEmbedUrl($_POST['video_url']);
         } elseif ($content_type === 'document') {
@@ -61,27 +49,39 @@ if (isset($_POST['edit_course'])) {
             throw new Exception("Invalid content type selected.");
         }
 
-        // Insert the new course
-        $newCourseId = $courseModel->addCourse($title, $content, $meta_description, $category_id, $teacher_id);
+        $courseModel->updateCourse($courseId, $title, $content, $meta_description, $category_id);
+        echo"added cessufullyyyyyy";
 
-        // Handle tags
+        // $courseModel->clearCourseTags($courseId);
         if (!empty($tags)) {
             foreach ($tags as $tag_id) {
-                $courseModel->addCourseTag($newCourseId, $tag_id);
+                $courseModel->addCourseTag($courseId, $tag_id);
             }
         }
 
-        // Commit transaction
         $pdo->commit();
-        header("Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/Courses/manageCourses.php");
+        header("Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/Courses/EditCourse.php?course_id=$courseId");
         exit;
     } catch (Exception $e) {
-        // Rollback in case of error
         $pdo->rollBack();
         echo "Error: " . $e->getMessage();
     }
 }
 ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -111,7 +111,6 @@ if (isset($_POST['edit_course'])) {
                             <h1 class="card-title text-center mb-4">Edit Course</h1>
 
                             <form id="editCourseForm" method="POST" enctype="multipart/form-data">
-                            <input type="hidden" name="course_id" value="<?php echo $course['id']; ?>">
                                 <!-- Title -->
                                 <div class="mb-3">
                                     <label for="title" class="form-label fw-semibold">Course Title</label>
@@ -127,11 +126,12 @@ if (isset($_POST['edit_course'])) {
                                 </div>
 
                                 <!-- Content Type -->
+                                 <?php $course['document_content'] ?>
                                 <div class="mb-3">
                                     <label for="content_type" class="form-label fw-semibold">Content Type</label>
                                     <select name="content_type" id="contentType" class="form-select" required>
-                                        <option value="video" <?= $course['video_content'] ? 'selected' : '' ?>>Video</option>
-                                        <option value="document" <?= $course['document_content'] ? 'selected' : '' ?>>Document</option>
+                                        <option value="video">Video</option>
+                                        <option value="document">Document</option>
                                     </select>
                                 </div>
 
@@ -140,13 +140,18 @@ if (isset($_POST['edit_course'])) {
                                 <label for="mediaInput" class="form-label fw-semibold">Course Content (Video URL or Document)</label>
                                 
                                 <?php if (is_null($course['video_content'])): ?>
-                                    <textarea class="form-control" id="exampleTextarea" rows="5" name="document"><?= htmlspecialchars($course['document_content']) ?></textarea>
+                                
+                                    <textarea class="form-control" id="exampleTextarea" rows="5" name="document">
+                                        <?= htmlspecialchars($course['document_content']) ?>
+                                    </textarea>
                                 <?php elseif (is_null($course['document_content'])): ?>
+                                   
                                     <iframe src="<?= htmlspecialchars($course['video_content']) ?>" frameborder="0" class="w-100" height="300"></iframe>
                                     <input type="url" class="form-control mt-2" id="mediaUrl" name="video_url" 
                                         value="<?= htmlspecialchars($course['video_content']) ?>">
                                 <?php endif; ?>
                                </div>
+
 
                                 <!-- Category -->
                                 <div class="mb-3">
@@ -170,12 +175,13 @@ if (isset($_POST['edit_course'])) {
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="tags[]" 
                                         value="<?= htmlspecialchars($tag['id']) ?>" 
-                                        id="tag<?= $tag['id'] ?>" <?= in_array($tag['id'], $tagsName) ? 'checked' : '' ?>>
+                                        id="tag<?= $tag['id'] ?>">
                                     <label class="form-check-label" for="tag<?= $tag['id'] ?>"><?= htmlspecialchars($tag['name']) ?></label>
                                 </div>
                             <?php endforeach; ?>
                         </div>
                     </div>
+
 
                                 <!-- Submit Button -->
                                 <button type="submit" class="btn btn-primary w-100" name="edit_course">Update Course</button>

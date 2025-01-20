@@ -50,9 +50,8 @@ abstract class Course extends Model {
     abstract public function addComment($userId, $courseId, $commentText);
 
     abstract public function getAllComments();
-    
+
+    abstract  public function deleteCourseTags($courseId);
 
 }
-
-
 ?>

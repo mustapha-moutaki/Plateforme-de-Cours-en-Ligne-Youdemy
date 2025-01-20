@@ -213,5 +213,17 @@ class VideoCourse extends Course {
     }
 
 
+
+
+
+    public function deleteCourseTags($courseId)
+    {
+                    $stmt = $this->pdo->prepare("DELETE FROM course_tag WHERE course_id = :courseId");
+                    $stmt->bindParam(':courseId', $courseId, PDO::PARAM_INT);
+                    $stmt->execute();
+                }
+
+
+
     
 }

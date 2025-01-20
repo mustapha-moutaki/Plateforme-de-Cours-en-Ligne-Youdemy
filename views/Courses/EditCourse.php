@@ -1,61 +1,108 @@
+<!--?php
+// require_once '../../vendor/autoload.php';
+// require_once '../../public/Helpers/utils.php';
+
+// use Config\Database;
+// use Models\Admin;
+// use Models\Category;
+// use Models\Tag;
+// use Models\Course;
+// use Models\VideoCourse;
+// use Models\DocumentCourse;
+// $pdo = Database::makeConnection();
+
+// $categoryModel = new Category($pdo);
+// $categories = $categoryModel->getAllCategories();
+// $tagModel = new Tag($pdo);
+// $tags = $tagModel->getAllTags();
+// $courseModel = new VideoCourse($pdo);
+
+
+// if (isset($_POST['edit_course'])) {
+//     try {
+//         $pdo->beginTransaction();
+
+//         $title = $_POST['title'];
+//         $meta_description = $_POST['meta_description'];
+//         $category_id = $_POST['category'];
+//         $tags = $_POST['tags'] ?? [];
+//         $content_type = $_POST['content_type'];
+
+//         if ($content_type === 'video') {
+//             $content = convertToEmbedUrl($_POST['video_url']);
+//         } elseif ($content_type === 'document') {
+//             $content = convertToEmbedUrl($_POST['document']);
+//         } else {
+//             throw new Exception("Invalid content type selected.");
+//         }
+
+// /////////////////////////////////////////////////////
+//         $courseHandler = new DocumentCourse($pdo);
+
+// // Get the course ID and new category ID from the form
+// $courseId = $_POST['course_id'];  // Course ID from the form
+// $category_id = $_POST['category'];  // New category ID from the form
+
+// // Call the method to update the course category
+// $result = $courseHandler->updateCourseCategory($courseId, $category_id);
+
+// // Show the result message
+// echo $result;
+
+// ////////////////////////////////////////////////////////////////////////
+//         $courseModel->updateCourse($courseId, $title, $content, $meta_description, $category_id);
+
+//         // $courseModel->clearCourseTags($courseId);
+//         if (!empty($tags)) {
+//             foreach ($tags as $tag_id) {
+//                 $courseModel->addCourseTag($courseId, $tag_id);
+//             }
+//         }
+
+//         $pdo->commit();
+//         header("Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/Courses/EditCourse.php?course_id=$courseId");
+//         exit;
+//     } catch (Exception $e) {
+//         $pdo->rollBack();
+//         echo "Error: " . $e->getMessage();
+//     }
+// }
+
+?->
+
 <?php
-require_once '../../vendor/autoload.php';
-require_once '../../public/Helpers/utils.php';
+// تضمين الاتصال بقاعدة البيانات وملف الكلاس
+require_once 'db_connection.php';
+require_once 'Course.php';  // Assuming this file contains the Course class
 
-use Config\Database;
-use Models\Admin;
-use Models\Category;
-use Models\Tag;
-use Models\Course;
-use Models\VideoCourse;
-use Models\DocumentCourse;
-$pdo = Database::makeConnection();
+// إنشاء كائن من كلاس Course
+$courseObj = new Course($pdo);
 
-$categoryModel = new Category($pdo);
-$categories = $categoryModel->getAllCategories();
-$tagModel = new Tag($pdo);
-$tags = $tagModel->getAllTags();
-$courseModel = new VideoCourse($pdo);
+// الحصول على ID الدورة من الرابط
+$courseId = $_GET['course_id'];
 
+// جلب تفاصيل الدورة من قاعدة البيانات
+$course = $courseObj->getCourseDetails($courseId);
 
-if (isset($_POST['edit_course'])) {
-    try {
-        $pdo->beginTransaction();
+// جلب قائمة الفئات من قاعدة البيانات
+$categories = $courseObj->getCategories();
 
-        $title = $_POST['title'];
-        $meta_description = $_POST['meta_description'];
-        $category_id = $_POST['category'];
-        $tags = $_POST['tags'] ?? [];
-        $content_type = $_POST['content_type'];
+// معالجة تحديث الدورة عند إرسال النموذج
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // جلب البيانات من النموذج
+    $courseId = $_POST['course_id'];
+    $title = $_POST['title'];
+    $content = $_POST['content'];
+    $meta_description = $_POST['meta_description'];
+    $category_id = $_POST['category'];
 
-        if ($content_type === 'video') {
-            $content = convertToEmbedUrl($_POST['video_url']);
-        } elseif ($content_type === 'document') {
-            $content = convertToEmbedUrl($_POST['document']);
-        } else {
-            throw new Exception("Invalid content type selected.");
-        }
+    // التحقق من وجود الفئة وتحديث الدورة
+    $updateResult = $courseObj->updateCourseCategory($courseId, $category_id);
 
-        $courseModel->updateCourse($courseId, $title, $content, $meta_description, $category_id);
-
-        // $courseModel->clearCourseTags($courseId);
-        if (!empty($tags)) {
-            foreach ($tags as $tag_id) {
-                $courseModel->addCourseTag($courseId, $tag_id);
-            }
-        }
-
-        $pdo->commit();
-        header("Location: http://localhost/Plateforme-de-Cours-en-Ligne-Youdemy/views/Courses/EditCourse.php?course_id=$courseId");
-        exit;
-    } catch (Exception $e) {
-        $pdo->rollBack();
-        echo "Error: " . $e->getMessage();
-    }
+    // إظهار النتيجة
+    echo $updateResult;
 }
 ?>
-
-
 
 
 
@@ -99,6 +146,7 @@ if (isset($_POST['edit_course'])) {
 
                             <form id="editCourseForm" method="POST" enctype="multipart/form-data">
                                 <!-- Title -->
+                                <input type="hidden" name="course_id" value="<?php echo $course['id']; ?>">
                                 <div class="mb-3">
                                     <label for="title" class="form-label fw-semibold">Course Title</label>
                                     <input type="text" class="form-control" id="title" required 
@@ -171,6 +219,7 @@ if (isset($_POST['edit_course'])) {
                                 </div>
 
                                 <!-- Submit Button -->
+                                 <input type="hidden" name="course_id" value="<?php $course['id'] ?>">
                                 <button type="submit" class="btn btn-primary w-100" name="edit_course">Update Course</button>
                             </form>
                         </div>

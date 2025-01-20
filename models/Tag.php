@@ -40,35 +40,6 @@ use PDO;
             return $stmt->fetch(PDO::FETCH_ASSOC);
         }
 
-        // public function getAllTagsName() {
-    
-        //     $sql = "SELECT c.title, GROUP_CONCAT(tags.name SEPARATOR ' ') as tags 
-        //             FROM courses c
-        //             LEFT JOIN course_tag ON course_tag.course_id = c.id
-        //             LEFT JOIN tags ON tags.id = course_tag.tag_id
-        //             GROUP BY c.title";
-        
-        //     $stmt = $this->pdo->prepare($sql);
-        
-        //     $stmt->execute();
-    
-        //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        // }
-
-
-        // public function getAllTagsName() {
-        //     $sql = "SELECT c.id, c.title, c.meta_description, c.category_id, GROUP_CONCAT(tags.name SEPARATOR ' ') as tags 
-        //             FROM courses c
-        //             LEFT JOIN course_tag ON course_tag.course_id = c.id
-        //             LEFT JOIN tags ON tags.id = course_tag.tag_id
-        //             GROUP BY c.id"; 
-        
-        //     $stmt = $this->pdo->prepare($sql);
-        //     $stmt->execute();
-        
-        //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        // }
-
 
         public function getAllTagsName() {
             $sql = "SELECT id, name FROM tags";
@@ -143,6 +114,14 @@ use PDO;
                 $stmt->execute(['course_id' => $courseId]);
                 return $stmt->fetchAll(PDO::FETCH_ASSOC);
             }
+
+            public function deleteCourseTags($courseId) {
+                                                       
+                $stmt = $this->pdo->prepare("DELETE FROM course_tags WHERE course_id = :courseId");
+                $stmt->bindParam(':courseId', $courseId, PDO::PARAM_INT);
+                $stmt->execute();
+            }
+
     }
 
 
