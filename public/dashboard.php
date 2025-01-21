@@ -9,6 +9,7 @@ use Models\VideoCourse;
 use Models\DocumentCourse;
 use Models\Teacher;
 use Models\User;
+use Models\Student;
 $pdo = new database();
 $conn = $pdo ->makeconnection();
 
@@ -21,14 +22,10 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
     $username = $_SESSION['username'];
     $user_id = $_SESSION['user_id'];
 $userRole = User::getUserRole($user_id);
-
 $categoryModel = new Category($pdo);
 $tagModel = new Tag($pdo);
 $courseModel = new VideoCourse($pdo);
 $teacherModel = new Teacher($pdo);
-
-
-// Get the counts of categories and tags
 $categoryCount = $categoryModel->countCategories();   
 $getAllcategories = $categoryModel->getAllCategories();
 $tagCount = $tagModel->countTags();  
@@ -62,14 +59,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['joinCourse'])) {
 }
 $userModel = new Teacher($pdo);
 $countteacherCourses = $userModel ->  countTeacherCourses($user_id);
-
 $totalstudentIncourse = $userModel -> joinCourses($user_id);
-
-$teacherId = 4; // Example teacher ID
-// $courseData = $coursemodelv->getMostEnrolledCourse();
+$teacherId = 4;
 $courseData = $coursemodelv->getTopThreeEnrolledCourses();
-
 $TopThreeTeachers = $userModel->topThreeTeachers($pdo);
+
+
+
+
+
+
+
+
+
 
 
 ?>

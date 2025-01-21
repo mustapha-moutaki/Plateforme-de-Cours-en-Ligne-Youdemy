@@ -25,8 +25,5 @@ class Database {
             }
         }
         return self::$pdo;
-    }
-
-
-    
+    } 
 }

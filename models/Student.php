@@ -12,9 +12,9 @@ use PDO;
             $this->pdo = $pdo;
         }
 
-        public function countStudent($table) {
-            return $this->countStudent($table); 
-        }
+        // public function countStudent($table) {
+        //     return $this->countStudents($table); 
+        // }
 
 
 
@@ -31,6 +31,7 @@ use PDO;
             return $this->update($this->table, ['status' => $status], 'id', $id);
         }
 
+       
 
     }
 

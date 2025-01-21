@@ -167,6 +167,7 @@ class User extends AbstractUser {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+   
 
     public function logout() {
         session_start();

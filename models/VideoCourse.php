@@ -106,20 +106,6 @@ class VideoCourse extends Course {
     }
     
 
-    // public function getMostEnrolledCourse(): array {
-    //     $sql = "SELECT courses.title AS course_title, COUNT(course_enrollments.user_id) AS total_students
-    //             FROM course_enrollments
-    //             JOIN courses ON course_enrollments.course_id = courses.id
-    //             GROUP BY courses.id
-    //             ORDER BY total_students DESC
-    //             LIMIT 1";
-        
-    //     $stmt = $this->pdo->prepare($sql);
-    //     $stmt->execute();
-    //     $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    //     return $result ?: null;// if there is no sourse
-    // }
-
     public function getTopThreeEnrolledCourses(): array {
         $sql = "SELECT courses.title AS course_title, COUNT(course_enrollments.user_id) AS total_students
                 FROM course_enrollments
@@ -212,12 +198,7 @@ class VideoCourse extends Course {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-
-
-
-
-    public function deleteCourseTags($courseId)
-    {
+    public function deleteCourseTags($courseId){
                     $stmt = $this->pdo->prepare("DELETE FROM course_tag WHERE course_id = :courseId");
                     $stmt->bindParam(':courseId', $courseId, PDO::PARAM_INT);
                     $stmt->execute();

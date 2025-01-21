@@ -195,43 +195,7 @@ $courses = $courseModel->getCoursesByPage($page, $limit);
         <p>&copy; 2025 Yudemy. All rights reserved.</p>
     </footer>
 
-    <!-- <script>
-        // Function to filter courses based on search input and selected filters
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('searchInput');
-            const categoryFilter = document.getElementById('categoryFilter');
-            const tagFilter = document.getElementById('tagFilter');
-            const courses = document.querySelectorAll('.course');
-
-            // Function to filter courses based on input
-            function filterCourses() {
-                const searchQuery = searchInput.value.toLowerCase();
-                const selectedCategory = categoryFilter.value.toLowerCase();
-                const selectedTag = tagFilter.value.toLowerCase();
-
-                courses.forEach(course => {
-                    const title = course.querySelector('h3').textContent.toLowerCase();
-                    const category = course.dataset.category.toLowerCase();
-                    const tag = course.dataset.tag.toLowerCase();
-
-                    const matchesSearch = title.includes(searchQuery);
-                    const matchesCategory = selectedCategory ? category === selectedCategory : true;
-                    const matchesTag = selectedTag ? tag === selectedTag : true;
-
-                    if (matchesSearch && matchesCategory && matchesTag) {
-                        course.style.display = '';
-                    } else {
-                        course.style.display = 'none';
-                    }
-                });
-            }
-
-            // Add event listeners
-            searchInput.addEventListener('input', filterCourses);
-            categoryFilter.addEventListener('change', filterCourses);
-            tagFilter.addEventListener('change', filterCourses);
-        });
-    </script> -->
+    
     <script>
     // Search filter logic
     document.addEventListener('DOMContentLoaded', function () {

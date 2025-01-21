@@ -58,7 +58,7 @@ abstract class Model {
         $stmt->execute();  
         return $stmt->fetchColumn();  
     }
-    
+
     public function countTeacher($table) {
         $pdo = Database::makeConnection(); 
         $sql = "SELECT COUNT(*) FROM $table WHERE role = 'teacher'";
@@ -66,6 +66,15 @@ abstract class Model {
         $stmt->execute();  
         return $stmt->fetchColumn();  
     }
+
+    //students cunt
+    // public function countStudenst($table) {
+    //     $pdo = Database::makeConnection(); 
+    //     $sql = "SELECT COUNT(*) FROM $table WHERE role = 'student'";
+    //     $stmt = $pdo->prepare($sql); 
+    //     $stmt->execute();  
+    //     return $stmt->fetchColumn();  
+    // }
 
      //select
      public function selectTeachers($table, $columns = "*", $where = "role = 'teacher'", $params = []) {
@@ -81,13 +90,13 @@ abstract class Model {
 
 
     
-        public function countStudent($table) {
-            $pdo = Database::makeConnection();
-            $sql = "SELECT COUNT(*) FROM $table";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute();
-            return $stmt->fetchColumn();
-        }
+        // public function countStudent($table) {
+        //     $pdo = Database::makeConnection();
+        //     $sql = "SELECT COUNT(*) FROM $table";
+        //     $stmt = $pdo->prepare($sql);
+        //     $stmt->execute();
+        //     return $stmt->fetchColumn();
+        // }
         
 
      //select

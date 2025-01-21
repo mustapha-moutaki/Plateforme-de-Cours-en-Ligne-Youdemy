@@ -34,9 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup'])) {
     $validator->validateEmail($email);
     $validator->validatePassword($password);
 
-    // Check for validation errors
     if ($validator->isValid()) {
-        // $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
         try {
             $user = new User(Database::makeconnection());
@@ -58,57 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup'])) {
     }
 }
 ?>
-
-<!--?php
-require_once '../vendor/autoload.php';
-use Config\Database;
-use Models\User;
-
-Database::makeconnection();
-// Start the session for CSRF token handling
-session_start();
-// Generate a CSRF token if it's not already set
-if (!isset($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
-
-// Check if the form is submitted
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup'])) {
-
-    // Check the CSRF token to prevent CSRF attacks
-    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        die("CSRF token validation failed!");
-    }
-
-    $username = htmlspecialchars(trim($_POST['username']));
-    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
-    $password = $_POST['password'];
-
-    try {
-        // Instantiate the User class
-        $user = new User(Database::makeconnection());
-        $_SESSION['username'] = $username;
-        // Register the user
-        if ($user->register($username, $email, $password)) {
-            echo "User registered successfully!";
-            $userId = $user->getPdo()->lastInsertId();
-    
-            $_SESSION['user_id'] = $userId;
-            $_SESSION['username'] = $username;
-        
-            header('Location:../../admin/index.php');
-            exit;
-        } else {
-            echo "Error: User could not be registered.";
-        }
-    } catch (\Exception $e) {
-        echo "Error: " . $e->getMessage();
-    }
-    
-}
-
-
-?-->
 
 <!DOCTYPE html>
 <html lang="en">

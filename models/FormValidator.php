@@ -9,7 +9,7 @@ class FormValidator {
         if (empty($username)) {
             $this->errors['username'] = "Username required.";
         } elseif (strlen($username) < 3) {
-            $this->errors['username'] = "At least 3 letters required.";
+            $this->errors['username'] = "<p style='color:white; background-color:red;width:100%;text-align:center; margin-top:10px'At least 3 letters required.</p>";
         }
     }
 
@@ -17,7 +17,7 @@ class FormValidator {
         if (empty($email)) {
             $this->errors['email'] = "Email is required.";
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $this->errors['email'] = "Invalid email format.";
+            $this->errors['email'] = "<p style='color:white; background-color:red;width:100%;text-align:center; margin-top:10px'>Invalid email format.</p>";
         }
     }
 
@@ -25,7 +25,7 @@ class FormValidator {
         if (empty($password)) {
             $this->errors['password'] = "Password required.";
         } elseif (strlen($password) < 8 || !preg_match('/[A-Za-z]/', $password) || !preg_match('/[0-9]/', $password)) {
-            $this->errors['password'] = "Password must include at least 8 letters and a number.";
+            $this->errors['password'] = "<p style='color:white; background-color:red;width:100%;text-align:center; margin-top:10px'>Password must include at least 8 letters and a number.</p>";
         }
     }
 
