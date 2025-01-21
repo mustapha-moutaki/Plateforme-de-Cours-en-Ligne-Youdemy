@@ -19,8 +19,8 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
   exit;
 }
 
-    $username = $_SESSION['username'];
-    $user_id = $_SESSION['user_id'];
+$username = $_SESSION['username'];
+$user_id = $_SESSION['user_id'];
 $userRole = User::getUserRole($user_id);
 $categoryModel = new Category($pdo);
 $tagModel = new Tag($pdo);

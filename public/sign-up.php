@@ -9,16 +9,7 @@ use Models\User;
 $pdo = Database::makeconnection();
 session_start();
 
-// if (!isset($_SESSION['csrf_token'])) {
-//     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-// }
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup'])) {
-    // if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-    //     die("CSRF token validation failed!");
-    // }
-
-    // Sanitize input
     $username = htmlspecialchars(trim($_POST['username']));
     $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     $password = $_POST['password'];
@@ -124,14 +115,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup'])) {
         <label class="form-check-label" for="student">Student</label>
     </div>
 </div>
-
-
-
-
-
-
-
-
                     <div class="text-center">
                       <button type="submit" class="btn btn-lg bg-gradient-dark btn-lg w-100 mt-4 mb-0" name="signup">Sign Up</button>
                     </div>

@@ -186,10 +186,6 @@ $courses = $courseModel->getCoursesByPage($page, $limit);
     <?php endif; ?>
 </div>
 
-
-
-
-
     <!-- Footer Section -->
     <footer class="bg-indigo-800 text-white text-center py-6 mt-12">
         <p>&copy; 2025 Yudemy. All rights reserved.</p>
