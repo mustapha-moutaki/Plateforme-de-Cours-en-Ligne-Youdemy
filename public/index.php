@@ -47,6 +47,11 @@ $courses = $courseModel->getCoursesByPage($page, $limit);
 
 ?>
 
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

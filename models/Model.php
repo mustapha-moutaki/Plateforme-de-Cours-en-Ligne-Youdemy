@@ -15,7 +15,7 @@ abstract class Model {
     }
 
 
-    //update methode
+  
     public function update($table, $data, $idColumn, $idValue) {
         $pdo = Database::makeconnection();
         $setClause = implode(', ', array_map(fn($col) => "$col = ?", array_keys($data)));
@@ -26,9 +26,7 @@ abstract class Model {
     }
     
 
-
-
-    //delete method
+    
     public function delete($table, $idColumn, $idValue) {
         $pdo = Database::makeconnection();
         $sql = "DELETE FROM $table WHERE $idColumn = ?";
@@ -37,8 +35,7 @@ abstract class Model {
         return $stmt->rowCount();
     }
 
-
-    //select
+    
     public function select($table, $columns = "*", $where = null, $params = []) {
         $pdo = Database::makeconnection();
         $sql = "SELECT $columns FROM $table";
@@ -67,16 +64,7 @@ abstract class Model {
         return $stmt->fetchColumn();  
     }
 
-    //students cunt
-    // public function countStudenst($table) {
-    //     $pdo = Database::makeConnection(); 
-    //     $sql = "SELECT COUNT(*) FROM $table WHERE role = 'student'";
-    //     $stmt = $pdo->prepare($sql); 
-    //     $stmt->execute();  
-    //     return $stmt->fetchColumn();  
-    // }
 
-     //select
      public function selectTeachers($table, $columns = "*", $where = "role = 'teacher'", $params = []) {
         $pdo = Database::makeconnection();
         $sql = "SELECT $columns FROM $table";
@@ -89,17 +77,6 @@ abstract class Model {
     }
 
 
-    
-        // public function countStudent($table) {
-        //     $pdo = Database::makeConnection();
-        //     $sql = "SELECT COUNT(*) FROM $table";
-        //     $stmt = $pdo->prepare($sql);
-        //     $stmt->execute();
-        //     return $stmt->fetchColumn();
-        // }
-        
-
-     //select
      public function selectStudent($table, $columns = "*", $where = "role = 'student'", $params = []) {
         $pdo = Database::makeconnection();
         $sql = "SELECT $columns FROM $table";

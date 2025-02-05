@@ -12,11 +12,6 @@ use PDO;
             $this->pdo = $pdo;
         }
 
-        // public function countStudent($table) {
-        //     return $this->countStudents($table); 
-        // }
-
-
 
         public function deleteStudent($id) {
             return $this->delete($this->table, 'id', $id);
@@ -30,8 +25,6 @@ use PDO;
         public function updateStatus($id, $status) {
             return $this->update($this->table, ['status' => $status], 'id', $id);
         }
-
-       
 
     }
 
